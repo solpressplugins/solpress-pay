@@ -1,0 +1,40 @@
+{
+    "name": "tuupola/base58",
+    "description": "Base58 encoder and decoder for arbitrary data",
+    "keywords": [
+        "base58"
+    ],
+    "homepage": "https://github.com/tuupola/base58",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mika Tuupola",
+            "email": "tuupola@appelsiini.net",
+            "homepage": "https://appelsiini.net/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : "^7.1|^8.0"
+    },
+    "suggest": {
+        "ext-gmp": "GMP extension provides the fastest encoding and decoding."
+    },
+    "autoload": {
+        "psr-4": {
+            "Tuupola\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tuupola\\": "tests"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.0",
+        "phpunit/phpunit": "^7.0|^8.0|^9.0",
+        "phpbench/phpbench": "^0.13.0",
+        "overtrue/phplint": "^1.0.0",
+        "phpstan/phpstan": "^0.12.37"
+    }
+}

@@ -1,0 +1,19 @@
+.text-bold {
+  font-weight: bold;
+}
+
+.text-med {
+  font-weight: 600;
+}
+
+.solpress__clickable {
+  position: relative;
+}
+
+.solpress__clickable__click-layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

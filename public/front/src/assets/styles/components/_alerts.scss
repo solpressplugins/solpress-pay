@@ -1,0 +1,93 @@
+.solpress__alerts {
+  position: fixed;
+  right: 20px;
+  top: 44px;
+  z-index: 10000;
+  list-style: none;
+  padding-left: 20px;
+  margin: 0;
+  max-height: 80vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.solpress__alert {
+  word-break: break-word;
+  padding: max(min(1.7vw, 12px), 8px) max(min(2vw, 20px), 12px);
+  padding-right: 36px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  color: white;
+  width: min(80vw, 350px);
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
+  position: relative;
+  font-size: 14px;
+
+  &.fade-in {
+    opacity: 1;
+  }
+
+  &.fade-out {
+    opacity: 0;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 768px) {
+    margin-right: 0;
+  }
+}
+
+.solpress__alert__dismiss {
+  padding: 0;
+  background-color: transparent;
+  color: white;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: transparent;
+    opacity: 0.8;
+    color: white;
+  }
+}
+
+.solpress__alert--success {
+  background-color: var(--green-900);
+}
+
+.solpress__alert--error {
+  background-color: var(--red-900);
+}
+
+.solpress__alert--info {
+  background-color: var(--purple-900);
+}
+
+.solpress__alert--long {
+  width: unset;
+  max-width: min(85vw, 40rem);
+}
+
+.solpress__alert__icon-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.solpress__alert__icon {
+  width: max(min(2vw, 22px), 20px);
+  margin-right: 8px;
+}
