@@ -18,7 +18,7 @@ Adds a connect Phantom wallet button to the checkout page, after connecting wall
 
 == Installation ==
 
-1. Upload `solpress.php` to the `/wp-content/plugins/` directory
+1. Download this repository as .zip and upload to the `/wp-content/plugins/` directory
 or Use WordPress’ Add New Plugin feature, search “solpress”,
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Add in your merchant wallet address and adjust any settings you would like
