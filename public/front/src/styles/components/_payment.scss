@@ -1,0 +1,79 @@
+.solpress-payment-root {
+  margin-top: 24px;
+}
+
+.solpress__header__warning {
+  background-color: var(--gray-500);
+  padding: 12px;
+  border-left: 8px solid var(--purple-900);
+  color: black;
+}
+
+.wallet-adapter-dropdown {
+  width: 100%;
+}
+
+.wallet-adapter-button {
+  min-width: 200px;
+  width: 100%;
+  margin: 16px auto;
+  border-radius: unset;
+  justify-content: center;
+}
+
+.solpress__payment-control__place-order {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  white-space: nowrap;
+  background-color: black;
+  color: white;
+  min-height: 48px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: none;
+
+  &:hover {
+    color: white;
+    background-color: black;
+    opacity: 0.85;
+  }
+}
+
+.solpress__payment-control__place-order-image {
+  width: 20px;
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.solpress__payment-control:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+.solpress__payment-control__error.solpress__alert--error {
+  opacity: 1;
+  width: unset;
+}
+
+.solpress__payment-control__error-content {
+  margin-bottom: 0;
+}
+
+.solpress__payment-control__sucess {
+  text-align: center;
+}
+
+.solpress__payment-control__sucess__icon svg {
+  width: max(min(9vw, 110px), 64px);
+}
+
+.solpress__payment-control__sucess__heading {
+  font-weight: bold;
+}
+
+.solpress__payment-control__sucess__desc {
+  font-size: max(min(1.3vw, 20px), 16px);
+  color: var(--gray-800);
+}

@@ -1,0 +1,11 @@
+//Settings
+@import "./settings/colors";
+
+//Utils
+@import "./utils/framework";
+
+// Components
+@import "./components/payment";
+@import "./components/alerts";
+@import "./components/loader";
+@import "./components/woo-commerce";

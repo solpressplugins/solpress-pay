@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c01fffc8.css",
+    "main.js": "/static/js/main.min.js",
+    "static/js/578.min.js": "/static/js/578.min.js",
+    "static/js/929.min.js": "/static/js/929.min.js",
+    "static/js/299.min.js": "/static/js/299.min.js",
+    "static/js/882.min.js": "/static/js/882.min.js",
+    "static/js/30.min.js": "/static/js/30.min.js",
+    "static/js/344.min.js": "/static/js/344.min.js",
+    "static/media/solana-sol-logo.svg": "/static/media/solana-sol-logo.518e83c59cd3cbd0b15ee058a58bc992.svg",
+    "index.html": "/index.html",
+    "main.min.css.map": "/static/css/main.min.css.map",
+    "main.min.js.map": "/static/js/main.min.js.map",
+    "main.c01fffc8.css.map": "/static/css/main.c01fffc8.css.map",
+    "578.min.js.map": "/static/js/578.min.js.map",
+    "929.min.js.map": "/static/js/929.min.js.map",
+    "299.min.js.map": "/static/js/299.min.js.map",
+    "882.min.js.map": "/static/js/882.min.js.map",
+    "344.min.js.map": "/static/js/344.min.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.min.css",
+    "static/js/main.min.js",
+    "static/css/main.c01fffc8.css"
+  ]
+}

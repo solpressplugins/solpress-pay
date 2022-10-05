@@ -1,0 +1,22 @@
+.solpress__alerts {
+  position: fixed;
+  right: 20px;
+  top: 60px;
+  z-index: 10000;
+  list-style: none;
+  padding-left: 20px;
+  margin: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  word-break: break-word;
+  width: max(min(60vw, 450px), 250px);
+
+  .MuiAlert-message {
+    font-size: 16px;
+
+    @media (max-width: 540px) {
+      font-size: 14px;
+    }
+  }
+}

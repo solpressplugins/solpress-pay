@@ -1,0 +1,73 @@
+import { PublicKey } from "@solana/web3.js";
+import SolpressVar, { Env } from "../types/SolpressVars";
+import TokenAddress from "../types/TokenAddress";
+
+declare const window: any;
+
+// sets a cookie 
+export function setCookie(name: string,value: any,days: number) {
+  var expires = "";
+  if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+export function getSolpressGlobalVars(): SolpressVar {
+  return window.solpress_payment || {};
+}
+
+/**
+ * Checkes whether we are in test mode or not depending on a wp global variable.
+ */
+export function isTestMode(): boolean {
+  return getSolpressGlobalVars().test_mode === Env.Test;
+}
+
+/**
+ * Scrolls element into view.
+ */
+export function scrollToElement(element: HTMLElement) {
+  if (element) {
+    element.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+}
+
+/**
+ * Checks if the returned status code is not an error code.
+ */
+export function isSuccessCode(statusCode: number) {
+  if (!isNaN(statusCode)) {
+    return statusCode < 400 && statusCode > 199;
+  }
+}
+
+/**
+ * Creates a promise that will resolve after the passed time.
+ * @param {number} time Time to wait before resolve in milliseconds
+ * @returns {Promise<void>}
+ */
+export function sleep(time: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+
+  /**
+   * Gets the address for USDC or a fake token for testing.
+   */
+export function getUSDCTokenAddress() {
+    // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
+    return isTestMode() ? TokenAddress.Dummy : TokenAddress.USDC;
+  }
+
+  /**
+   * Gets the public key USDC.
+   */
+export function getUSDCTokenKey() {
+    // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
+    return new PublicKey(getUSDCTokenAddress());
+  }
