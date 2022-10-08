@@ -5,18 +5,19 @@ import { __ } from "@wordpress/i18n";
 interface PayButtonI {
   isLoading: boolean;
   sendTransaction: () => void;
+  isQr: "qr" | "popup"
 }
 
-function PayButton({ isLoading, sendTransaction }: PayButtonI) {
-  return (
-    <button
+function PayButton({ isLoading, sendTransaction, isQr }: PayButtonI) {
+  if (isQr === "popup") {
+    return (<button
       disabled={isLoading}
       onClick={sendTransaction}
       type="button"
       aria-hidden="true"
       className="solpress__payment-control solpress__payment-control--btn solpress__payment-control__place-order"
     >
-      {__("Pay with")}
+      {__("Complete here with")}
       <img
         className="solpress__payment-control__place-order-image"
         src={solanaPayLogo}
@@ -25,8 +26,30 @@ function PayButton({ isLoading, sendTransaction }: PayButtonI) {
       />
       {__("Pay")}
       {isLoading ? <Loader /> : null}
-    </button>
-  );
+    </button>)
+  }
+
+  if (isQr === "qr") {
+    return (<button
+      disabled={isLoading}
+      onClick={sendTransaction}
+      type="button"
+      aria-hidden="true"
+      className="solpress__payment-control solpress__payment-control--btn solpress__payment-control__place-order qr-btn"
+    >
+      {__("Scan QR to use")}
+      <img
+        className="solpress__payment-control__place-order-image"
+        src={solanaPayLogo}
+        alt={__("Solana")}
+        title={__("Solana")}
+      />
+      {__("Pay")}
+      {isLoading ? <Loader /> : null}
+    </button>)
+  }  
+
+  return <p>No Option Returned</p>
 }
 
 export default PayButton;

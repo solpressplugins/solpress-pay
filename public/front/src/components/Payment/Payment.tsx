@@ -111,7 +111,9 @@ function Payment() {
 
 
 
-  const triggerSendTransaction = useCallback(async () => {
+  type isQrArgs = "qr" | "popup";
+
+  const triggerSendTransaction = useCallback(async (isQr: isQrArgs ) => {
     try {
       if (!publicKey) throw new WalletNotConnectedError();
       if (!recipientKey) return;
@@ -143,27 +145,33 @@ function Payment() {
 
           const qr = createQR(url, 512, 'transparent')
 
-          if (qrRef.current && amount > 0) {
-
+          if (qrRef.current) {
             qrRef.current.innerHTML = ''
-            qr.append(qrRef.current)
-
           }
 
-          const { recipient, amount: orderAmount, reference, memo } = parseURL(url) as TransferRequestURL;
+          if (qrRef.current && amount > 0 && isQr === "qr") {
 
+            qr.append(qrRef.current)
+            setAwaitingPayment("waiting")
+          }
 
-          /**
-           * Create the transaction with the parameters decoded from the URL
-           */
-          const tx = await createTransfer(connection, publicKey, { recipient, amount: orderAmount!, reference: referenceKey, splToken:  getUSDCTokenKey() });
+          
+          if (isQr === "popup") {
+            const { recipient, amount: orderAmount, reference, memo } = parseURL(url) as TransferRequestURL;
 
-          /**
-           * Send the transaction to the network
-           */
-          await window.solana.signAndSendTransaction(tx);
+            /**
+             * Create the transaction with the parameters decoded from the URL
+             */
+            const tx = await createTransfer(connection, publicKey, { recipient, amount: orderAmount!, reference: referenceKey, splToken:  getUSDCTokenKey() });
+  
+            /**
+             * Send the transaction to the network
+             */
+            await window.solana.signAndSendTransaction(tx);
+  
+            setAwaitingPayment("waiting")
+          }
 
-          setAwaitingPayment("waiting")
 
         })
         .catch(err => console.log(err))
@@ -185,10 +193,18 @@ function Payment() {
   // JSX
   const payButtonJSX =
     publicKey && !isTransactionDone ? (
-      <PayButton
-        isLoading={transactionStarted}
-        sendTransaction={triggerSendTransaction}
-      />
+      <>
+        <PayButton
+          isQr="qr"
+          isLoading={transactionStarted}
+          sendTransaction={() => triggerSendTransaction("qr")}
+        />
+        <PayButton
+          isQr="popup"
+          isLoading={transactionStarted}
+          sendTransaction={() => triggerSendTransaction("popup")}
+        />
+      </>
     ) : null;
   const successMessageJSX =
     isTransactionDone && transactionAmount ? (

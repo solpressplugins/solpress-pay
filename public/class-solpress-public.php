@@ -78,7 +78,7 @@ class Solpress_Public {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/solpress-public.css', array(), $this->version, 'all' );
-		wp_enqueue_style( 'main.min.css', plugin_dir_url( __FILE__ ) . 'front/build/static/css/main.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'solpress_payment_public_main.min.css', plugin_dir_url( __FILE__ ) . 'front/build/static/css/main.min.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -101,7 +101,7 @@ class Solpress_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/solpress-public.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( 'main.min.js', plugin_dir_url( __FILE__ ) . 'front/build/static/js/main.min.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'solpress_payment_public_main.min.js', plugin_dir_url( __FILE__ ) . 'front/build/static/js/main.min.js', array( 'jquery' ), $this->version, true );
 	}
 	/**
 	 * Get the order total for frontend transactions.
