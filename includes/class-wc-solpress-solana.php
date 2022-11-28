@@ -88,7 +88,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
             } else {
                 $this->memo = WC()->session->get(SOLPRESS_MEMO_SESSION);
             }
-            $this->signature = isset($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) ? $_COOKIE[SOLPRESS_SIGNATURE_STORAGE] : '';
+            $this->signature = isset($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) ? sanitize_text_field($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) : '';
         }
 
         // This action hook saves the settings.
@@ -183,7 +183,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         if ($this->description) {
             $this->description = trim($this->description);
             // display the description with <p> tags etc.
-            echo wpautop(wp_kses_post($this->description));
+            echo wp_kses_post(wpautop($this->description));
         }
         // connect to wallet markup.
         if (is_readable(SOLPRESS_ROOT . 'public/partials/solpress-connect-wallet.php')) {
@@ -212,12 +212,9 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         }
 
         // do not work with card detailes without SSL unless your website is in a test mode.
-        // if (!$this->testmode && !is_ssl()) {
-        //     return;
-        // }
-
-        // let's suppose it is our payment processor JavaScript that allows to obtain a token .
-        // wp_enqueue_script( 'solpress_solana_js', 'https://www.solpress_solanapayments.com/api/token.js' );
+        if (!$this->testmode && !is_ssl()) {
+            return;
+        }
 
         // Custom.js that we would work with.
         wp_register_script('wc_solpress.js', SOLPRESS_ASSETS_URL . 'main.js', array('jquery'), '1.0.0', true);
@@ -263,7 +260,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         }
         // get random key to be sent as id
         $this->random_key = random_int(0, 99999999);
-        $this->signature = isset($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) ? $_COOKIE[SOLPRESS_SIGNATURE_STORAGE] : '';
+        $this->signature = isset($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) ? sanitize_text_field($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) : '';
 
         if ($this->signature) {
             // put the request body and headers
@@ -281,42 +278,28 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
                 'headers' => array(
                     'Content-Type' => 'application/json',
                 ),
-                'body' => json_encode($body),
+                'body' => wp_json_encode($body),
             );
-						
+
             $request_retry_count = 1;
             $max_request_retries = 5;
-						
+
             do {
-								sleep(3);
+                sleep(3);
                 $confirmed = wp_remote_post($end_point, $args);
                 if (!is_wp_error($confirmed)) {
                     $confirmed_body = isset($confirmed['body']) ? json_decode($confirmed['body'], true) : array();
                     $this->memo = $this->generate_memo();
-                    var_dump($confirmed_body['result']['meta']['postTokenBalances'][0]['mint']);
-                    var_dump($transaction_token);
-										if (!isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint'])) {
-											continue;
-										}
+
+                    if (!isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint'])) {
+                        continue;
+                    }
 
                     if (isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint']) && $confirmed_body['result']['meta']['postTokenBalances'][0]['mint'] === $transaction_token) {
                         $schema = 'Program log: Memo (len ' . strlen($this->memo) . '): "' . $this->memo . '"';
-												// should break loop
-												$request_retry_count = 10;
-                        if (isset($confirmed_body['result']['meta']['logMessages'])) {
-                            // if ($confirmed_body['result']['meta']['logMessages'][1] !== $schema) {
-                            //     var_dump($confirmed_body['result']['meta']['logMessages']);
+                        // should break loop
+                        $request_retry_count = 10;
 
-                            //     wc_add_notice(esc_html__('The signature provided has not valid memo.', 'solpress'), 'error');
-
-                            //     if ($this->solpress_log) {
-                            //         $malicious = $_SERVER['REMOTE_ADDR'];
-                            //         add_to_solpress_log("This IP[$malicious] is a malicious Address");
-                            //     }
-                            //     WC()->session->set(SOLPRESS_MEMO_SESSION, '');
-                            //     return false;
-                            // }
-                        }
                     } else {
 
                         wc_add_notice(esc_html__('Invalid Transaction Token.', 'solpress'), 'error');
@@ -364,7 +347,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
 
         // we received the payment
         $order->payment_complete();
-        // $order->reduce_order_stock();
+        $order->reduce_order_stock();
 
         // some notes to customer (replace true with false to make it private).
         $order->add_order_note(esc_html__('Hey, your order is paid! Thank you!, Order memo:' . $this->memo . ' And Transaction Link: ', 'solpress') . esc_url($solscan), true);
