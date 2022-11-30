@@ -20,12 +20,8 @@ if ( ! function_exists( 'add_to_solpress_log' ) ) {
 	 **/
 	function add_to_solpress_log( $message, $type = 'error' ) {
 
-			$date = gmdate( 'F j, Y, g:i:s a' );
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions
-				error_log( "[$date]" . " : $type message received " . " [$message] " . "\r\n", 3, SOLPRESS_ROOT . '/solpress.log' );
-				// phpcs:enable
-			}
+			$date = date( 'F j, Y, g:i:s a' );
+			error_log( "[$date]" . " : $type message received " . " [$message] " . "\r\n", 3, SOLPRESS_ROOT . '/solpress.log' );
 
 	}
 }
