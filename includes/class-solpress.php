@@ -161,7 +161,6 @@ class Solpress {
 		$this->loader->add_action( 'plugins_loaded', $solpress_core, 'woocommerce_solpress_init', 0 );
 		$this->loader->add_action( 'woocommerce_payment_gateways', $solpress_core, 'woocommerce_solpress_gateway' );
 		$this->loader->add_action( 'plugin_action_links_solpress/solpress.php', $solpress_core, 'solpress_settings_link' );
-		// $this->loader->add_filter( 'woocommerce_order_number', $solpress_core, 'change_order_number_for_solpress_payments' );
 		$this->loader->add_filter( 'woocommerce_thankyou_' . SOLPRESS_GATEWAY_ID, $solpress_core, 'add_solpress_special_voucher' );
 
 	}

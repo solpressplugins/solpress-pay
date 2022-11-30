@@ -108,7 +108,7 @@ class Solpress_Admin {
 	public function solpress_admin_notices() {
 		if ( function_exists( 'wp_get_active_and_valid_plugins' ) && function_exists( 'trailingslashit' ) ) {
 			$plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
-			if ( ! in_array( $plugin_path, wp_get_active_and_valid_plugins() ) ) {
+			if ( ! in_array( $plugin_path, wp_get_active_and_valid_plugins(), true ) ) {
 				 echo '<div class="notice notice-error is-dismissible">
           <p><strong>' . esc_html__( 'To enable SolPress features you need to install the WooCommerce plugin.', 'solpress' ) . '</strong></p>
          </div>';
