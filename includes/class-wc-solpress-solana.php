@@ -155,7 +155,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
             'network_url' => array(
                 'title' => esc_html__('RPC Network URL', 'solpress'),
                 'type' => 'url',
-                'description' => esc_html__('Leave empty to use mainnet. For Medium/High Volume Woocommerce Stores and/or Increased Performance Please Use: ', 'solpress') . esc_url('https://solpress.genesysgo.net/'),
+                'description' => esc_html__('Leave empty to use mainnet rpc. If it fails check ' . esc_url('https://solpress.dev/rpc/') . ' for free and other available rpc networks.', 'solpress'),
             ),
         );
     }
@@ -183,7 +183,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         if ($this->description) {
             $this->description = trim($this->description);
             // display the description with <p> tags etc.
-            echo esc_html(wpautop($this->description));
+            echo esc_html($this->description);
         }
         // connect to wallet markup.
         if (is_readable(SOLPRESS_ROOT . 'public/partials/solpress-connect-wallet.php')) {
