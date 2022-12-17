@@ -57,17 +57,17 @@ export function sleep(time: number): Promise<void> {
 
 
   /**
-   * Gets the address for USDC or a fake token for testing.
+   * Gets the address for KIN or a fake token for testing.
    */
-export function getUSDCTokenAddress() {
+export function getKINTokenAddress() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
-    return isTestMode() ? TokenAddress.Dummy : TokenAddress.USDC;
+    return isTestMode() ? TokenAddress.Dummy : TokenAddress.KIN;
   }
 
   /**
-   * Gets the public key USDC.
+   * Gets the public key KIN.
    */
-export function getUSDCTokenKey() {
+export function getKINTokenKey() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
-    return new PublicKey(getUSDCTokenAddress());
+    return new PublicKey(getKINTokenAddress());
   }

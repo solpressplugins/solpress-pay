@@ -8,7 +8,7 @@ import { Keypair, PublicKey, sendAndConfirmTransaction, TransactionSignature } f
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSolpress from "../../hooks/useSolpress";
 import SolanaPay from "../../services/SolanaPay/SolanaPay.service";
-import { getSolpressGlobalVars, getUSDCTokenKey, setCookie } from "../../utils/functions";
+import { getSolpressGlobalVars, getKINTokenKey, setCookie } from "../../utils/functions";
 import useAlert from "../../hooks/useAlert";
 import WooCommerceService from "../../services/WooCommerce.service";
 import { __ } from "@wordpress/i18n";
@@ -41,7 +41,7 @@ function Payment() {
   const referenceKey = useMemo(() => Keypair.generate().publicKey, [])
 
   useEffect(() => {
-    console.log("PK", publicKey);
+    // console.log("PK", publicKey);
     if (publicKey) {
       addSuccessAlert(__("Wallet connected successfully"));
     }
@@ -56,7 +56,6 @@ function Payment() {
         if (isAwaitingPayment !== "waiting") return
         // Check if there is any transaction for the reference
         const signatureInfo = await findReference(connection, referenceKey, { finality: 'confirmed' })
-        console.log(recipientKey, referenceKey.toString(), signatureInfo.signature, getUSDCTokenKey().toString())
         // Validate that the transaction has the expected recipient, amount and SPL token
         const isValid = await validateTransfer(
           connection,
@@ -64,7 +63,7 @@ function Payment() {
           {
             recipient: new PublicKey(recipientKey),
             amount: BigNumber(orderAmount),
-            splToken: getUSDCTokenKey(),
+            splToken: getKINTokenKey(),
             reference: referenceKey,
           },
           { commitment: 'confirmed' }
@@ -127,13 +126,13 @@ function Payment() {
       WooCommerceService.validateWCCheckoutForm();
 
       const { getAPIOrderAmount } = new SolpressAPI();
-      console.log(referenceKey.toString(), recipientKey)
+      // console.log(referenceKey.toString(), recipientKey)
       getAPIOrderAmount()
         .then(async (amount) => {
           setOrderAmount(amount)
           const urlParams: TransferRequestURLFields = {
             recipient: new PublicKey(recipientKey),
-            splToken: getUSDCTokenKey(),
+            splToken: getKINTokenKey(),
             amount: BigNumber(amount),
             reference: referenceKey,
             label: document.querySelector('title')?.textContent || "none",
@@ -162,7 +161,7 @@ function Payment() {
             /**
              * Create the transaction with the parameters decoded from the URL
              */
-            const tx = await createTransfer(connection, publicKey, { recipient, amount: orderAmount!, reference: referenceKey, splToken:  getUSDCTokenKey() });
+            const tx = await createTransfer(connection, publicKey, { recipient, amount: orderAmount!, reference: referenceKey, splToken:  getKINTokenKey() });
   
             /**
              * Send the transaction to the network

@@ -43,8 +43,8 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         $this->id = SOLPRESS_GATEWAY_ID; // payment gateway plugin ID.
         $this->icon = ''; // URL of the icon that will be displayed on checkout page near your gateway name.
         $this->has_fields = true; // in case you need a custom credit card form.
-        $this->method_title = esc_html__('USDC on Solana', 'solpress');
-        $this->method_description = esc_html__('Pay via Solana USDC', 'solpress'); // will be displayed on the options page.
+        $this->method_title = esc_html__('KIN on Solana', 'solpress');
+        $this->method_description = esc_html__('Pay using KIN on Solana', 'solpress'); // will be displayed on the options page.
 
         // gateways can support subscriptions, refunds, saved payment methods.
         $this->supports = array(
@@ -127,14 +127,14 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
                 'title' => esc_html__('Title', 'solpress'),
                 'type' => 'text',
                 'description' => esc_html__('This controls the title which the user sees during checkout.', 'solpress'),
-                'default' => esc_html__('USDC on Solana Payments', 'solpress'),
+                'default' => esc_html__('KIN on Solana Payments', 'solpress'),
                 'desc_tip' => true,
             ),
             'description' => array(
                 'title' => esc_html__('Description', 'solpress'),
                 'type' => 'textarea',
                 'description' => esc_html__('This controls the description which the user sees during checkout.', 'solpress'),
-                'default' => esc_html__('Pay via USDC on Solana.', 'solpress'),
+                'default' => esc_html__('Pay via KIN on Solana.', 'solpress'),
             ),
             'testmode' => array(
                 'title' => esc_html__('Test mode', 'solpress'),
@@ -260,7 +260,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
             $transaction_token = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
         } else {
             $end_point = 'https://api.mainnet-beta.solana.com';
-            $transaction_token = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+            $transaction_token = 'kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6';
         }
         // get random key to be sent as id
         $this->random_key = random_int(0, 99999999);

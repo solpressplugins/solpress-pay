@@ -285,7 +285,7 @@ class SolanaPay implements SolanaPayI {
    */
   getUSDCTokenKey() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
-    return isTestMode() ? TokenAddress.Dummy : TokenAddress.USDC;
+    return isTestMode() ? TokenAddress.Dummy : TokenAddress.KIN;
   }
 
   /**
