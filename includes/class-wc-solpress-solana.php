@@ -120,9 +120,9 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             return $currencies;
         });
 
-        add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol) {
+        add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol, $token_name) {
             switch ($currency) {
-                case $token_symbol:
+                case $token_name:
                     $currency_symbol = $token_symbol;
                     break;
             }
