@@ -70,6 +70,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         $this->network_url = $this->get_option('network_url');
         $this->solpress_log = 'yes' === $this->get_option('solpress_log');
 
+        $this->custom_spl_enabled = $this->get_option('custom_spl_enabled');
         $this->custom_spl_token = $this->get_option('custom_spl_token');
 
         // data that will be used for the memo
@@ -199,14 +200,17 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             'custom_spl_token' => array(
                 'title' => esc_html__('Custom SPL Token Address', 'solpress'),
                 'type' => 'text',
+                'description' => esc_html__('This controls the description which the user sees during checkout.', 'solpress'),
             ),
             'custom_spl_symbol' => array(
                 'title' => esc_html__('Custom SPL Token Symbol', 'solpress'),
                 'type' => 'text',
+                'description' => esc_html__('Set this value to add the token symbol to your available Woocommerce currency list. Works when Custom SPL Token Name is set.', 'solpress'),
             ),
             'custom_spl_name' => array(
                 'title' => esc_html__('Custom SPL Token Name', 'solpress'),
                 'type' => 'text',
+                'description' => esc_html__('Set this value to add the token name to your available Woocommerce currency list. Works when Custom SPL Token Symbol is set.', 'solpress'),
             ),
         );
     }
@@ -288,7 +292,8 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 'active_currency' => (function_exists('get_woocommerce_currency')) ? get_woocommerce_currency() : 'USD',
                 'get_total_order' => 'get_order_total',
                 'signature_storage' => SOLPRESS_SIGNATURE_STORAGE,
-                'custom_spl_token' => $this->custom_spl_token
+                'custom_spl_token' => $this->custom_spl_token,
+                'custom_spl_enabled' => $this->custom_spl_enabled
             )
         );
 
