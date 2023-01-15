@@ -15,6 +15,7 @@ interface SolpressVar {
   to_public_key: string;
   network_url: string;
   custom_spl_token?: string;
+  custom_spl_enabled?: "no" | "yes";
 }
 
 export default SolpressVar;

@@ -60,7 +60,6 @@ export function sleep(time: number): Promise<void> {
    * Gets the address for USDC or a fake token for testing.
    */
 export function getUSDCTokenAddress() {
-    // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
     return isTestMode() ? TokenAddress.Dummy : TokenAddress.USDC;
 }
 
@@ -68,9 +67,13 @@ export function getUSDCTokenAddress() {
    * Gets the public key USDC.
    */
 export function getSplTokenKey() {
-    // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
     const globalVars = getSolpressGlobalVars() 
-    const publicKey = (globalVars.custom_spl_token && globalVars.custom_spl_token?.length > 0) ? globalVars.custom_spl_token : getUSDCTokenAddress()
+    const publicKey = (
+        globalVars.custom_spl_token && 
+        globalVars.custom_spl_token?.length > 0 &&
+        globalVars.custom_spl_enabled !== "no"
+      )
+      ? globalVars.custom_spl_token : getUSDCTokenAddress()
     return new PublicKey( 
       publicKey
       );
