@@ -70,6 +70,8 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         $this->network_url = $this->get_option('network_url');
         $this->solpress_log = 'yes' === $this->get_option('solpress_log');
 
+        $this->custom_spl_token = $this->get_option('custom_spl_token');
+
         // data that will be used for the memo
         if (WC()->session) {
             $this->order_total = WC()->cart->total ? WC()->cart->total : 0;
@@ -241,6 +243,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
                 'active_currency' => (function_exists('get_woocommerce_currency')) ? get_woocommerce_currency() : 'USD',
                 'get_total_order' => 'get_order_total',
                 'signature_storage' => SOLPRESS_SIGNATURE_STORAGE,
+                'custom_spl_token' => $this->custom_spl_token,
             )
         );
 
