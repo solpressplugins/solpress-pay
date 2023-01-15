@@ -186,8 +186,24 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
                 'type' => 'url',
                 'description' => esc_html__('Leave empty to use mainnet rpc. If it fails check ' . esc_url('https://solpress.dev/rpc/') . ' for free and other available rpc networks.', 'solpress'),
             ),
+            'custom_spl_enabled' => array(
+                'title' => esc_html__('Use Custom SPL Token', 'solpress'),
+                'label' => esc_html__('Use your own SPL token', 'solpress'),
+                'type' => 'checkbox',
+                'description' => esc_html__('To enable other SPL tokens.', 'solpress'),
+                'default' => 'no',
+                'desc_tip' => true,
+            ),
             'custom_spl_token' => array(
                 'title' => esc_html__('Custom SPL Token Address', 'solpress'),
+                'type' => 'text',
+            ),
+            'custom_spl_symbol' => array(
+                'title' => esc_html__('Custom SPL Token Symbol', 'solpress'),
+                'type' => 'text',
+            ),
+            'custom_spl_name' => array(
+                'title' => esc_html__('Custom SPL Token Name', 'solpress'),
                 'type' => 'text',
             ),
         );
