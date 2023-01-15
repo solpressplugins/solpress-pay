@@ -4,7 +4,6 @@ import AlertsProvider from "./contexts/AlertsProvider";
 import SolpressProvider from "./contexts/SolpressProvider";
 
 //@ts-ignore
-console.log("window.solpress", window.solpress);
 
 function App() {
   return (

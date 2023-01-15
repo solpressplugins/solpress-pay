@@ -3,3 +3,4 @@
 - Added User/Custom SPL token support. 
 - Custom SPL token Symbol and Name is appended to existing available currencies list
 - Now Validating transactions using User supplied RPC
+- Enabled More Adapters
