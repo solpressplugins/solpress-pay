@@ -116,13 +116,13 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
          * Custom currency and currency symbol
          */
         add_filter('woocommerce_currencies', function($currencies) use ($token_name){
-            $currencies['KIN'] = __( $token_name , 'woocommerce');
+            $currencies['CSPLT'] = __( $token_name , 'woocommerce');
             return $currencies;
         });
 
-        add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol, $token_name) {
+        add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol) {
             switch ($currency) {
-                case $token_name:
+                case 'CSPLT':
                     $currency_symbol = $token_symbol;
                     break;
             }
