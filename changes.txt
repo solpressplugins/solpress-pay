@@ -1,2 +1,4 @@
 ### 2023.01.15
 - Moved bash script files into /utils
+- Added User/Custom SPL token support. 
+- Custom SPL token Symbol is appended to existing available currencies list

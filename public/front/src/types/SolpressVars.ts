@@ -14,6 +14,7 @@ interface SolpressVar {
   test_mode: Env;
   to_public_key: string;
   network_url: string;
+  custom_spl_token?: string;
 }
 
 export default SolpressVar;

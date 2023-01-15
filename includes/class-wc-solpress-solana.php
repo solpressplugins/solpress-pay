@@ -234,7 +234,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
             array(
                 'to_public_key' => $this->publishable_key,
                 'network_url' => $this->network_url,
-                'order_total' => self::get_order_total(),
+                'order_total' => self::get_order_total(),,m
                 'security' => wp_create_nonce('solpress-solana'),
                 'confirm_transaction' => 'solpress_confirm_transaction',
                 'ajax_url' => admin_url('admin-ajax.php'),

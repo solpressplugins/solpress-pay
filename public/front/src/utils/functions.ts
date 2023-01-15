@@ -62,12 +62,15 @@ export function sleep(time: number): Promise<void> {
 export function getUSDCTokenAddress() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
     return isTestMode() ? TokenAddress.Dummy : TokenAddress.USDC;
-  }
+}
 
   /**
    * Gets the public key USDC.
    */
-export function getUSDCTokenKey() {
+export function getSplTokenKey() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
-    return new PublicKey(getUSDCTokenAddress());
+    const globalVars = getSolpressGlobalVars() 
+    return new PublicKey( 
+      (globalVars.custom_spl_token && globalVars.custom_spl_token?.length > 0) ? globalVars.custom_spl_token : getUSDCTokenAddress()
+      );
   }
