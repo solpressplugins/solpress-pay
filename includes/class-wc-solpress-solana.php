@@ -234,8 +234,8 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
             array(
                 'to_public_key' => $this->publishable_key,
                 'network_url' => $this->network_url,
-                'order_total' => self::get_order_total(),,m
-                'security' => wp_create_nonce('solpress-solana'),
+                'order_total' => self::get_order_total(),
+                'security' => wp_create_nonce("solpress-solana"),
                 'confirm_transaction' => 'solpress_confirm_transaction',
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'test_mode' => $this->testmode,
@@ -243,7 +243,7 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
                 'active_currency' => (function_exists('get_woocommerce_currency')) ? get_woocommerce_currency() : 'USD',
                 'get_total_order' => 'get_order_total',
                 'signature_storage' => SOLPRESS_SIGNATURE_STORAGE,
-                'custom_spl_token' => $this->custom_spl_token,
+                'custom_spl_token' => $this->custom_spl_token
             )
         );
 
