@@ -71,7 +71,6 @@ export function getSplTokenKey() {
     // return new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") 
     const globalVars = getSolpressGlobalVars() 
     const publicKey = (globalVars.custom_spl_token && globalVars.custom_spl_token?.length > 0) ? globalVars.custom_spl_token : getUSDCTokenAddress()
-    console.log('publick: ', publicKey)
     return new PublicKey( 
       publicKey
       );
