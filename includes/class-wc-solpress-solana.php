@@ -73,6 +73,8 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         $this->custom_spl_enabled = $this->get_option('custom_spl_enabled');
         $this->custom_spl_token = $this->get_option('custom_spl_token');
 
+
+
         // data that will be used for the memo
         if (WC()->session) {
             $this->order_total = WC()->cart->total ? WC()->cart->total : 0;
@@ -316,8 +318,8 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             $end_point = 'https://api.devnet.solana.com';
             $transaction_token = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
         } else {
-            $end_point = 'https://api.mainnet-beta.solana.com';
-            $transaction_token = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+            $end_point =  strlen($this->network_url) > 0 ? $this->network_url : 'https://api.mainnet-beta.solana.com';
+            $transaction_token = strlen($this->custom_spl_token) > 0 && $this->custom_spl_enabled != 'no' ? $this->custom_spl_token : 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
         }
         // get random key to be sent as id
         $this->random_key = random_int(0, 99999999);
