@@ -101,6 +101,33 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
 
         // React root
         add_action('woocommerce_review_order_after_payment', array($this, 'add_wallets_root'));
+
+        $this->addKINCurrency();
+    }
+
+    private function addKINCurrency()
+    {
+        /**
+         * Custom currency and currency symbol
+         */
+        add_filter('woocommerce_currencies', 'add_my_currency');
+
+        function add_my_currency($currencies)
+        {
+            $currencies['KIN'] = __('KIN', 'woocommerce');
+            return $currencies;
+        }
+
+        add_filter('woocommerce_currency_symbol', 'add_my_currency_symbol', 10, 2);
+
+        function add_my_currency_symbol($currency_symbol, $currency)
+        {
+            switch ($currency) {
+                case 'KIN':$currency_symbol = 'KIN';
+                    break;
+            }
+            return $currency_symbol;
+        }
     }
 
     /**
