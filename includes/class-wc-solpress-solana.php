@@ -30,7 +30,7 @@ if (!class_exists('WC_Payment_Gateway') && !isset(WC()->session)) {
  * @author     Solpress  <solpressteam@gmail.com>
  */
 
-class Wc_Solpress_Solana extends WC_Payment_Gateway
+class WC_Solpress_Solana extends WC_Payment_Gateway
 {
 
     /**
@@ -102,32 +102,34 @@ class Wc_Solpress_Solana extends WC_Payment_Gateway
         // React root
         add_action('woocommerce_review_order_after_payment', array($this, 'add_wallets_root'));
 
-        $this->addKINCurrency();
+        if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
+            $this->addCustomTokenCurrency();
+        }
+
     }
 
-    private function addKINCurrency()
+    private function addCustomTokenCurrency()
     {
+        $token_name = $this->get_option('custom_spl_name');
+        $token_symbol = $this->get_option('custom_spl_symbol');
         /**
          * Custom currency and currency symbol
          */
-        add_filter('woocommerce_currencies', 'add_my_currency');
-
-        function add_my_currency($currencies)
-        {
-            $currencies['KIN'] = __('KIN', 'woocommerce');
+        add_filter('woocommerce_currencies', function($currencies) use ($token_name){
+            $currencies['KIN'] = __( $token_name , 'woocommerce');
             return $currencies;
-        }
+        });
 
-        add_filter('woocommerce_currency_symbol', 'add_my_currency_symbol', 10, 2);
-
-        function add_my_currency_symbol($currency_symbol, $currency)
-        {
+        add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol) {
             switch ($currency) {
-                case 'KIN':$currency_symbol = 'KIN';
+                case $token_symbol:
+                    $currency_symbol = $token_symbol;
                     break;
             }
             return $currency_symbol;
-        }
+        }, 10, 2);
+
+
     }
 
     /**
