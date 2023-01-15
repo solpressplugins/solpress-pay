@@ -162,7 +162,6 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 'type' => 'text',
                 'description' => esc_html__('This controls the title which the user sees during checkout.', 'solpress'),
                 'default' => esc_html__('USDC on Solana Payments', 'solpress'),
-                'desc_tip' => true,
             ),
             'description' => array(
                 'title' => esc_html__('Description', 'solpress'),
@@ -180,10 +179,12 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             ),
             'test_publishable_key' => array(
                 'title' => esc_html__('Test Devnet Merchant Wallet Address', 'solpress'),
+                'description' => esc_html__('Please enter a Devnet Merchant Wallet Address, this is a string of alphanumeric characters used to receive the payment', 'solpress'),
                 'type' => 'text',
             ),
             'publishable_key' => array(
                 'title' => esc_html__('Live Merchant Wallet Address', 'solpress'),
+                'description' => esc_html__('Please enter your Live Merchant Wallet address on the Solana Mainnet. Make sure to double check the address as transactions sent to the wrong address cannot be recovered.', 'solpress'),
                 'type' => 'text',
             ),
             'network_url' => array(
@@ -202,7 +203,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             'custom_spl_token' => array(
                 'title' => esc_html__('Custom SPL Token Address', 'solpress'),
                 'type' => 'text',
-                'description' => esc_html__('This controls the description which the user sees during checkout.', 'solpress'),
+                'description' => esc_html__("Please enter the valid custom SPL token contract address. This can be found on the blockchain explorer by searching for the contract's transaction hash.", 'solpress'),
             ),
             'custom_spl_symbol' => array(
                 'title' => esc_html__('Custom SPL Token Symbol', 'solpress'),
