@@ -71,8 +71,7 @@ class SolanaPay implements SolanaPayI {
     addInfoAlert: (content: string) => void,
     addErrorAlert: (content: string) => void
   ) {
-    console.log("Recipient: ", recipientPK.toString());
-    console.log("Payer:", payerPK.toString());
+
     //Validating accounts
     await this.validateAccounts(connection, recipientPK, payerPK);
 
@@ -84,7 +83,6 @@ class SolanaPay implements SolanaPayI {
       throw new Error(__("Failed to get order amount"));
     }
 
-    console.log(orderAmount);
 
     const referenceKey = Keypair.generate().publicKey
 
@@ -104,7 +102,6 @@ class SolanaPay implements SolanaPayI {
 
     const res = await this.createSolanaTransaction(connection, payerPK, recipientPK, orderAmount);
 
-    console.log(res);
     if (!res || !res.transaction) {
       throw new Error(__("Failed to create transaction"));
     }
@@ -194,7 +191,6 @@ class SolanaPay implements SolanaPayI {
       throw new Error(__("Failed to get order amount"));
     }
 
-    console.log("Creating transaction...");
     const transaction = await createTransfer(connection, payerPK, {
       amount,
       recipient,
@@ -202,13 +198,6 @@ class SolanaPay implements SolanaPayI {
       memo,
       splToken
     });
-    // const transaction = await createTransaction(connection, payerPK, recipient, amount, {
-    //   reference,
-    //   memo,
-    //   splToken,
-    // });
-
-    console.log(payerPK);
 
     transaction.feePayer = payerPK;
     transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
@@ -275,7 +264,6 @@ class SolanaPay implements SolanaPayI {
     const memoQuery = `&memo=${this.getMemo()}`;
 
     const url = `solana:${recipientPK.toString()}?amount=${usdcAmount}${usdcQuery}&reference=${recipientPK.toString()}${memoQuery}`;
-    console.log(url);
 
     return parseURL(url) as TransferRequestURL;
   }

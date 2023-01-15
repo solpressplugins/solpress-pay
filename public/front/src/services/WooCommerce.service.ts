@@ -78,7 +78,6 @@ class WooCommerce {
    * the checkout succeeds.
    */
   handleCheckoutAJAXComplete(statusCode: number, isFailed: boolean) {
-    console.log("Is checkout success: ", isSuccessCode(statusCode));
     if (isFailed || !isSuccessCode(statusCode)) {
       this.togglePlaceOrderButton(true);
     }

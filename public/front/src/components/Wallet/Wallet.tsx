@@ -38,9 +38,7 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 function Wallet() {
   const { isTransactionDone } = useSolpress();
   const network = SolanaPay.getCluster();
-  console.log(network);
   const endpoint = useMemo(() => SolanaPay.getNetworkURL(), []);
-  console.log(endpoint);
   const wallets = useMemo(
     () => [
       new BraveWalletAdapter(),
@@ -85,8 +83,7 @@ function Wallet() {
     ],
     [network]
   );
-  console.log(endpoint);
-  console.log(network);
+
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets}>

@@ -41,7 +41,6 @@ function Payment() {
   const referenceKey = useMemo(() => Keypair.generate().publicKey, [])
 
   useEffect(() => {
-    console.log("PK", publicKey);
     if (publicKey) {
       addSuccessAlert(__("Wallet connected successfully"));
     }
@@ -56,7 +55,6 @@ function Payment() {
         if (isAwaitingPayment !== "waiting") return
         // Check if there is any transaction for the reference
         const signatureInfo = await findReference(connection, referenceKey, { finality: 'confirmed' })
-        console.log(recipientKey, referenceKey.toString(), signatureInfo.signature, getSplTokenKey().toString())
         // Validate that the transaction has the expected recipient, amount and SPL token
         const isValid = await validateTransfer(
           connection,
@@ -127,7 +125,6 @@ function Payment() {
       WooCommerceService.validateWCCheckoutForm();
 
       const { getAPIOrderAmount } = new SolpressAPI();
-      console.log(referenceKey.toString(), recipientKey)
       getAPIOrderAmount()
         .then(async (amount) => {
           setOrderAmount(amount)

@@ -49,13 +49,9 @@ function SolpressProvider({ children }: SolpressProviderI) {
   }, [isTransactionDone]);
 
   useEffect(() => {
-    console.log("Is Selected: ", isSelected);
-    console.log("Is Transaction Done: ", isTransactionDone);
 
     WooCommerceService.handleAJAXComplete((requestURL, statusCode, isFailed) => {
-      console.log("Checkout failed: ", isFailed);
       if (WooCommerceService.isCheckoutAction(requestURL)) {
-        console.log(requestURL);
         WooCommerceService.handleCheckoutAJAXComplete(statusCode, isFailed);
       } else {
         WooCommerceService.togglePlaceOrderButton(!window.solpress_isSelected || isTransactionDone);
