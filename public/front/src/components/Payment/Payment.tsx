@@ -64,7 +64,6 @@ function Payment() {
         if (getSplTokenKey()) {
           options.splToken = getSplTokenKey()
         }
-        console.log(options)
         const isValid = await validateTransfer(
           connection,
           signatureInfo.signature,
@@ -143,7 +142,6 @@ function Payment() {
           if (getSplTokenKey()) {
             urlParams.splToken = getSplTokenKey()
           }
-          console.log(urlParams)
           // Encode the params into the format shown
           const url = encodeURL(urlParams)
 
@@ -174,7 +172,6 @@ function Payment() {
             if (getSplTokenKey()) {
               options.splToken = getSplTokenKey()
             }
-            console.log(options)
             const tx = await createTransfer(connection, publicKey, options);
   
             /**
