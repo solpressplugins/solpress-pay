@@ -68,13 +68,18 @@ export function getUSDCTokenAddress() {
    */
 export function getSplTokenKey() {
     const globalVars = getSolpressGlobalVars() 
-    const publicKey = (
+    let publicKey: string | undefined = (
         globalVars.custom_spl_token && 
         globalVars.custom_spl_token?.length > 0 &&
         globalVars.custom_spl_enabled !== "no"
       )
       ? globalVars.custom_spl_token : getUSDCTokenAddress()
-    return new PublicKey( 
-      publicKey
-      );
+    
+    if (publicKey !== "So11111111111111111111111111111111111111112") {
+      // publicKey = undefined
+      return new PublicKey( 
+        publicKey
+        );
+    }
+    
   }
