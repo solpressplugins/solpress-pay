@@ -353,7 +353,14 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 $confirmed = wp_remote_post($end_point, $args);
                 if (!is_wp_error($confirmed)) {
                     $confirmed_body = isset($confirmed['body']) ? json_decode($confirmed['body'], true) : array();
-                    $this->memo = $this->generate_memo();
+                    // $this->memo = $this->generate_memo();
+                    $program_index = $confirmed_body['result']['transaction']['message']['instructions'][0]['programIdIndex'];
+                    $program_account = $confirmed_body['result']['transaction']['message']['accountKeys'][$program_index];
+
+                    if ($program_account === "11111111111111111111111111111111" && $transaction_token === "So11111111111111111111111111111111111111112") {
+                        // @todo: compare amounts also.
+                        $request_retry_count = $max_request_retries + 10;
+                    }
 
                     if (!isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint'])) {
                         continue;
@@ -361,7 +368,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
                     if (isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint']) && $confirmed_body['result']['meta']['postTokenBalances'][0]['mint'] === $transaction_token) {
                         // should break loop
-                        $request_retry_count = 10;
+                        $request_retry_count = $max_request_retries + 10;
 
                     } else {
 
