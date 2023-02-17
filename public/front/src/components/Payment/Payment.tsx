@@ -167,7 +167,10 @@ function Payment() {
 
   type isQrArgs = "qr" | "popup";
 
-  const h = () => setTransactionStarted(true);
+  const h = () => setTransactionStarted(old => {
+    debugger
+    return !old
+  });
 
   const triggerSendTransaction = useCallback(
     async (isQr: isQrArgs) => {
