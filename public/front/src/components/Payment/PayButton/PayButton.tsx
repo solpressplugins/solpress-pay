@@ -11,7 +11,6 @@ interface PayButtonI {
 
 
 function PayButton({ isLoading, sendTransaction, isQr }: PayButtonI) {
-  console.log(isLoading)
   if (isQr === "popup") {
     return (
       <button

@@ -39,6 +39,29 @@ import BigNumber from "bignumber.js";
 
 import { SolpressAPI } from "../../api/SolPressAPI";
 
+// JSX
+const PayButtons = ({
+  triggerSendTransaction,
+  publicKey,
+  isTransactionDone,
+  transactionStarted,
+}: any) => {
+  return publicKey && !isTransactionDone ? (
+    <>
+      <PayButton
+        isQr="qr"
+        isLoading={transactionStarted}
+        sendTransaction={() => triggerSendTransaction("qr")}
+      />
+      <PayButton
+        isQr="popup"
+        isLoading={transactionStarted}
+        sendTransaction={() => triggerSendTransaction("popup")}
+      />
+    </>
+  ) : null;
+};
+
 function Payment() {
   const [connection] = useState(SolanaPay.createConnection());
 
@@ -228,26 +251,15 @@ function Payment() {
         WooCommerceService.enableCheckoutFormInputs();
       }
     },
-    [addErrorAlert, connection, publicKey, recipientKey, referenceKey, setTransactionStarted,  ]
+    [
+      addErrorAlert,
+      connection,
+      publicKey,
+      recipientKey,
+      referenceKey,
+      setTransactionStarted,
+    ]
   );
-
-  // JSX
-  const PayButtons = ({publicKey, isTransactionDone, transactionStarted }: any) => {
-    return publicKey && !isTransactionDone ? (
-      <>
-        <PayButton
-          isQr="qr"
-          isLoading={transactionStarted}
-          sendTransaction={() => triggerSendTransaction("qr")}
-        />
-        <PayButton
-          isQr="popup"
-          isLoading={transactionStarted}
-          sendTransaction={() => triggerSendTransaction("popup")}
-        />
-      </>
-    ) : null;
-  }
 
   const successMessageJSX =
     isTransactionDone && transactionAmount ? (
@@ -258,7 +270,12 @@ function Payment() {
     <section>
       <Header />
       <div ref={qrRef} />
-      <PayButtons publicKey={publicKey} isTransactionDone={isTransactionDone} transactionStarted={transactionStarted}  />
+      <PayButtons
+        triggerSendTransaction={triggerSendTransaction}
+        publicKey={publicKey}
+        isTransactionDone={isTransactionDone}
+        transactionStarted={transactionStarted}
+      />
       {successMessageJSX}
     </section>
   );
