@@ -73,6 +73,9 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         $this->custom_spl_enabled = $this->get_option('custom_spl_enabled');
         $this->custom_spl_token = $this->get_option('custom_spl_token');
 
+        $this->custom_qr_btn_class = $this->get_option('custom_qr_btn_class');
+        $this->custom_pay_btn_class = $this->get_option('custom_pay_btn_class');
+
 
 
         // data that will be used for the memo
@@ -215,6 +218,16 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 'type' => 'text',
                 'description' => esc_html__('Set this value to add the token name to your available Woocommerce currency list. Works when Custom SPL Token Symbol is set.', 'solpress'),
             ),
+            'custom_qr_btn_class' => array(
+                'title' => esc_html__('QR button class', 'solpress'),
+                'type' => 'text',
+                'description' => esc_html__('Custom class to override CSS style on the "Scan QR code" button.', 'solpress'),
+            ),
+            'custom_pay_btn_class' => array(
+                'title' => esc_html__('Complete here button class', 'solpress'),
+                'type' => 'text',
+                'description' => esc_html__('Custom class to override CSS style on the "Complete here" button.', 'solpress'),
+            ),
         );
     }
 
@@ -296,7 +309,9 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 'get_total_order' => 'get_order_total',
                 'signature_storage' => SOLPRESS_SIGNATURE_STORAGE,
                 'custom_spl_token' => $this->custom_spl_token,
-                'custom_spl_enabled' => $this->custom_spl_enabled
+                'custom_spl_enabled' => $this->custom_spl_enabled,
+                'custom_qr_btn_class' => $this->custom_qr_btn_class,
+                'custom_pay_btn_class' => $this->custom_pay_btn_class,
             )
         );
 

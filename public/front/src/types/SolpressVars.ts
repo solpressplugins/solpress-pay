@@ -16,6 +16,8 @@ interface SolpressVar {
   network_url: string;
   custom_spl_token?: string;
   custom_spl_enabled?: "no" | "yes";
+  custom_qr_btn_class?: string;
+  custom_pay_btn_class?: string;
 }
 
 export default SolpressVar;

@@ -64,7 +64,8 @@ export function getUSDCTokenAddress() {
 }
 
   /**
-   * Gets the public key USDC.
+   * Gets the public key USDC as default or the saved custom SPL token if available.
+   * It returns undefined if Sols address is saved as a custom token.
    */
 export function getSplTokenKey() {
     const globalVars = getSolpressGlobalVars() 
@@ -82,4 +83,17 @@ export function getSplTokenKey() {
         );
     }
     
+  }
+
+
+/**
+ * Gets the custom classes.
+ */
+export function getCustomBtnClasses() {
+    const {custom_qr_btn_class, custom_pay_btn_class} = getSolpressGlobalVars() 
+  
+    return {
+      custom_qr_btn_class,
+      custom_pay_btn_class
+    }
   }
