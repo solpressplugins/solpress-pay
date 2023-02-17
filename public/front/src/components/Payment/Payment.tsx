@@ -247,6 +247,24 @@ function Payment() {
         />
       </>
     ) : null;
+
+  const PayButtons = ({publicKey, isTransactionDone, transactionStarted }: any) => {
+    return publicKey && !isTransactionDone ? (
+      <>
+        <PayButton
+          isQr="qr"
+          isLoading={transactionStarted}
+          sendTransaction={() => triggerSendTransaction("qr")}
+        />
+        <PayButton
+          isQr="popup"
+          isLoading={transactionStarted}
+          sendTransaction={() => triggerSendTransaction("popup")}
+        />
+      </>
+    ) : null;
+  }
+
   const successMessageJSX =
     isTransactionDone && transactionAmount ? (
       <TransactionSuccess amount={transactionAmount} />
@@ -256,7 +274,7 @@ function Payment() {
     <section>
       <Header />
       <div ref={qrRef} />
-      {payButtonJSX}
+      <PayButtons publicKey={publicKey} isTransactionDone={isTransactionDone} transactionStarted={transactionStarted}  />
       {successMessageJSX}
     </section>
   );
