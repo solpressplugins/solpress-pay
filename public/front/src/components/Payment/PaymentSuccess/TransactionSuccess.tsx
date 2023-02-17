@@ -9,9 +9,7 @@ function TransactionSuccess({ amount }: { amount: number }) {
       aria-hidden="true"
       role="alert"
     >
-      <SuccessIcon />
-      <h3 className="solpress__payment-control__sucess__heading">{__("Transaction Done")}</h3>
-      <TransactionDescription amount={amount} />
+      <h3 className="solpress__payment-control__sucess__heading">{__("Transaction Complete")}</h3>
     </div>
   );
 }
