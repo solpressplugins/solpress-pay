@@ -62,6 +62,7 @@ const PayButtons = ({
   ) : null;
 };
 
+
 function Payment() {
   const [connection] = useState(SolanaPay.createConnection());
 
@@ -167,10 +168,11 @@ function Payment() {
 
   type isQrArgs = "qr" | "popup";
 
-  const h = () => setTransactionStarted(old => {
-    debugger
-    return !old
-  });
+
+  const prepTransaction = (isQr: isQrArgs) => {
+    setTransactionStarted(true)
+    triggerSendTransaction(isQr)
+  }
 
   const triggerSendTransaction = useCallback(
     async (isQr: isQrArgs) => {
@@ -185,64 +187,64 @@ function Payment() {
         // Validating WC checkout form
         WooCommerceService.validateWCCheckoutForm();
         
-        
-        h();
-        getAPIOrderAmount()
-          .then(async (amount) => {
-            setOrderAmount(amount);
-            const urlParams: TransferRequestURLFields = {
-              recipient: new PublicKey(recipientKey),
-              amount: BigNumber(amount),
-              reference: referenceKey,
-              label: document.querySelector("title")?.textContent || "none",
-              message:
-                document.querySelector("td.product-name")?.textContent ||
-                "none",
-            };
-            if (getSplTokenKey()) {
-              urlParams.splToken = getSplTokenKey();
-            }
-            // Encode the params into the format shown
-            const url = encodeURL(urlParams);
+        const amount = await getAPIOrderAmount().catch((err) => console.log(err));
+        if (!amount) return
+        setOrderAmount(amount);
+        const urlParams: TransferRequestURLFields = {
+          recipient: new PublicKey(recipientKey),
+          amount: BigNumber(amount),
+          reference: referenceKey,
+          label: document.querySelector("title")?.textContent || "none",
+          message:
+            document.querySelector("td.product-name")?.textContent ||
+            "none",
+        };
+        if (getSplTokenKey()) {
+          urlParams.splToken = getSplTokenKey();
+        }
+        // Encode the params into the format shown
+        const url = encodeURL(urlParams);
 
-            const qr = createQR(url, 512, "transparent");
+        const sectionWidth = document.querySelector('.solpress-payment-root')?.clientWidth
 
-            if (qrRef.current) {
-              qrRef.current.innerHTML = "";
-            }
+        const qr = createQR(url, sectionWidth ||  512, "transparent");
 
-            if (qrRef.current && amount > 0 && isQr === "qr") {
-              qr.append(qrRef.current);
-              setAwaitingPayment("waiting");
-            }
+        if (qrRef.current) {
+          qrRef.current.innerHTML = "";
+        }
 
-            if (isQr === "popup") {
-              const {
-                amount: orderAmount,
-              } = parseURL(url) as TransferRequestURL;
+        if (qrRef.current && amount > 0 && isQr === "qr") {
+          qr.append(qrRef.current);
+          setAwaitingPayment("waiting");
+        }
 
-              /**
-               * Create the transaction with the parameters decoded from the URL
-               */
-              const options: CreateTransferFields = {
-                recipient: new PublicKey(recipientKey),
-                amount: orderAmount!,
-                reference: referenceKey,
-              };
-              if (getSplTokenKey()) {
-                options.splToken = getSplTokenKey();
-              }
-              const tx = await createTransfer(connection, publicKey, options);
+        if (isQr === "popup") {
+          const {
+            amount: orderAmount,
+          } = parseURL(url) as TransferRequestURL;
 
-              /**
-               * Send the transaction to the network
-               */
-              await window.solana.signAndSendTransaction(tx);
+          /**
+           * Create the transaction with the parameters decoded from the URL
+           */
+          const options: CreateTransferFields = {
+            recipient: new PublicKey(recipientKey),
+            amount: orderAmount!,
+            reference: referenceKey,
+          };
+          if (getSplTokenKey()) {
+            options.splToken = getSplTokenKey();
+          }
+          const tx = await createTransfer(connection, publicKey, options);
 
-              setAwaitingPayment("waiting");
-            }
-          })
-          .catch((err) => console.log(err));
+          /**
+           * Send the transaction to the network
+           */
+          await window.solana.signAndSendTransaction(tx);
+
+          setAwaitingPayment("waiting");
+        }
+
+          
 
         // return;
       } catch (err: any) {
@@ -255,14 +257,7 @@ function Payment() {
         WooCommerceService.enableCheckoutFormInputs();
       }
     },
-    [
-      addErrorAlert,
-      connection,
-      publicKey,
-      recipientKey,
-      referenceKey,
-      setTransactionStarted,
-    ]
+    [addErrorAlert, connection, getAPIOrderAmount, publicKey, recipientKey, referenceKey]
   );
 
   const successMessageJSX =
@@ -275,7 +270,7 @@ function Payment() {
       <Header />
       <div ref={qrRef} />
       <PayButtons
-        triggerSendTransaction={triggerSendTransaction}
+        triggerSendTransaction={prepTransaction}
         publicKey={publicKey}
         isTransactionDone={isTransactionDone}
         transactionStarted={transactionStarted}
