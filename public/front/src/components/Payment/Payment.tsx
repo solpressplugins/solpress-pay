@@ -76,7 +76,7 @@ function Payment() {
     transactionAmount,
     updateTransactionAmount,
   } = useSolpress();
-  const { addSuccessAlert, addErrorAlert, addInfoAlert } = useAlert();
+  const { addSuccessAlert, addErrorAlert } = useAlert();
   const [transactionStarted, setTransactionStarted] = useState(false);
   const [orderAmount, setOrderAmount] = useState(0);
   const [isAwaitingPayment, setAwaitingPayment] = useState<
@@ -86,6 +86,9 @@ function Payment() {
   const recipientKey = useMemo(() => getSolpressGlobalVars().to_public_key, []);
 
   const referenceKey = useMemo(() => Keypair.generate().publicKey, []);
+
+  const { getAPIOrderAmount } = new SolpressAPI();
+
 
   useEffect(() => {
     if (publicKey) {
@@ -164,6 +167,8 @@ function Payment() {
 
   type isQrArgs = "qr" | "popup";
 
+  const h = () => setTransactionStarted(true);
+
   const triggerSendTransaction = useCallback(
     async (isQr: isQrArgs) => {
       try {
@@ -171,15 +176,14 @@ function Payment() {
         if (!recipientKey) return;
         if (!referenceKey) return;
 
-        setTransactionStarted(true);
         WooCommerceService.disableOtherPaymentMethods();
         WooCommerceService.disableCheckoutFormInputs();
-
+        
         // Validating WC checkout form
         WooCommerceService.validateWCCheckoutForm();
-
-        const { getAPIOrderAmount } = new SolpressAPI();
-
+        
+        
+        h();
         getAPIOrderAmount()
           .then(async (amount) => {
             setOrderAmount(amount);
@@ -211,10 +215,7 @@ function Payment() {
 
             if (isQr === "popup") {
               const {
-                recipient,
                 amount: orderAmount,
-                reference,
-                memo,
               } = parseURL(url) as TransferRequestURL;
 
               /**
@@ -240,7 +241,7 @@ function Payment() {
           })
           .catch((err) => console.log(err));
 
-        return;
+        // return;
       } catch (err: any) {
         console.log(err);
         console.log(err.stack);
