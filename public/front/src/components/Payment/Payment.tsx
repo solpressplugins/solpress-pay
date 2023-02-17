@@ -228,26 +228,10 @@ function Payment() {
         WooCommerceService.enableCheckoutFormInputs();
       }
     },
-    [addErrorAlert, connection, publicKey, recipientKey, referenceKey]
+    [addErrorAlert, connection, publicKey, recipientKey, referenceKey, setTransactionStarted,  ]
   );
 
   // JSX
-  const payButtonJSX =
-    publicKey && !isTransactionDone ? (
-      <>
-        <PayButton
-          isQr="qr"
-          isLoading={transactionStarted}
-          sendTransaction={() => triggerSendTransaction("qr")}
-        />
-        <PayButton
-          isQr="popup"
-          isLoading={transactionStarted}
-          sendTransaction={() => triggerSendTransaction("popup")}
-        />
-      </>
-    ) : null;
-
   const PayButtons = ({publicKey, isTransactionDone, transactionStarted }: any) => {
     return publicKey && !isTransactionDone ? (
       <>
