@@ -8,24 +8,28 @@ interface PayButtonI {
   isQr: "qr" | "popup"
 }
 
+
+
 function PayButton({ isLoading, sendTransaction, isQr }: PayButtonI) {
+  console.log(isLoading)
   if (isQr === "popup") {
-    return (<button
-      disabled={isLoading}
-      onClick={sendTransaction}
-      type="button"
-      aria-hidden="true"
-      className="solpress__payment-control solpress__payment-control--btn solpress__payment-control__place-order"
-    >
-      {__("Complete here with")}
-      <img
-        className="solpress__payment-control__place-order-image"
-        src={solanaPayLogo}
-        alt={__("Solana")}
-        title={__("Solana")}
-      />
-      {__("Pay")}
-      {isLoading ? <Loader /> : null}
+    return (
+      <button
+        disabled={isLoading}
+        onClick={sendTransaction}
+        type="button"
+        aria-hidden="true"
+        className="solpress__payment-control solpress__payment-control--btn solpress__payment-control__place-order"
+      > 
+        {__("Complete here with")}
+        <img
+          className="solpress__payment-control__place-order-image"
+          src={solanaPayLogo}
+          alt={__("Solana")}
+          title={__("Solana")}
+        />
+        {__("Pay")}
+        {isLoading ? <Loader /> : null}
     </button>)
   }
 
