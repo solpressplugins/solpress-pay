@@ -19,6 +19,7 @@ if (!defined('ABSPATH')) {
 if (!class_exists('WC_Payment_Gateway') && !isset(WC()->session)) {
     return;
 }
+
 /**
  * Handle the payments via Solana.
  *
@@ -29,7 +30,6 @@ if (!class_exists('WC_Payment_Gateway') && !isset(WC()->session)) {
  * @subpackage Solpress/includes
  * @author     Solpress  <solpressteam@gmail.com>
  */
-
 class WC_Solpress_Solana extends WC_Payment_Gateway
 {
 
@@ -66,8 +66,11 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         } else {
             $this->cluster = 'mainnet';
         }
+
+        $default_mainnet_rpc =  'https://solana-mainnet.rpc.extrnode.com';
+
         $this->publishable_key = $this->testmode ? $this->get_option('test_publishable_key') : $this->get_option('publishable_key');
-        $this->network_url = $this->get_option('network_url');
+        $this->network_url = $this->get_option('network_url') !== "" ? $this->get_option('network_url') : $default_mainnet_rpc;
         $this->solpress_log = 'yes' === $this->get_option('solpress_log');
 
         $this->custom_spl_enabled = $this->get_option('custom_spl_enabled');
@@ -334,7 +337,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             $end_point = 'https://api.devnet.solana.com';
             $transaction_token = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
         } else {
-            $end_point =  strlen($this->network_url) > 0 ? $this->network_url : 'https://solana-mainnet.rpc.extrnode.com';
+            $end_point =  strlen($this->network_url) > 0 ? $this->network_url : $default_mainnet_rpc;
             $transaction_token = strlen($this->custom_spl_token) > 0 && $this->custom_spl_enabled !== 'no' ? $this->custom_spl_token : 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
         }
         // get random key to be sent as id
