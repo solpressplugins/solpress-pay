@@ -4,7 +4,7 @@ Donate link: https://solpress.dev
 Tags: solana pay, woocommerce, payment, payment gateway, solana, crypto, phantom, phantom wallet
 Requires at least: 4.7
 Tested up to: 6.1
-Stable tag: 2.0.3
+Stable tag: 2.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,9 +12,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Solana Pay for Woocommerce websites. Permissionless, open source, and fast payments. Funded by the Solana Foundation.
 
 == Description ==
-Allows for Solana Pay Payment Gateway on Woocommerce Stores. Currently supports USDC on Solana and popular Solana wallets.
+Allows for Solana Pay Payment Gateway on Woocommerce Stores. Currently supports USDC on Solana, or add any SPL (Solana Program Library) token to plugin settings. Supports all major Solana wallets like Phantom, Brave, or xNFT Backpack.
 
-Adds a connect wallet button to the checkout page, after connecting wallet, users may pay in USDC token on Solana after clicking on Solana Pay button.
+Adds a connect wallet button to the checkout page, after connecting wallet, users may pay in USDC (or other token) on Solana after clicking on Solana Pay button.
 
 == Installation ==
 
@@ -40,6 +40,7 @@ You can learn more on Solpress.dev and Solanapay.com
 
 = 2.0 =
 * Added support for all popular Solana Wallets via Wallet Adapter
+* Added support for any SPL token
 * Fixed bug with payment button on checkout not showing under certain conditions
 * Various other bug fixes
 
