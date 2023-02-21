@@ -16,7 +16,7 @@
  * Plugin Name:       SolPress Payment Gateway
  * Plugin URI:        https://solpress.dev
  * Description:       A payment gateway using Solana Pay for your WooCommerce store.
- * Version:           2.0.4
+ * Version:           2.0.0
  * Author:            Solpress
  * Author URI:        https://profiles.wordpress.org/solpressplugins/
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'SOLPRESS_VERSION', '2.0.4' );
+define( 'SOLPRESS_VERSION', '2.0.0' );
 define( 'SOLPRESS_ROOT', plugin_dir_path( __FILE__ ) );
 define( 'SOLPRESS_ASSETS', SOLPRESS_ROOT . '/assets/' );
 define( 'SOLPRESS_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets/' );
