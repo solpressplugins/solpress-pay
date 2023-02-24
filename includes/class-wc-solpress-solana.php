@@ -115,16 +115,15 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             $this->addCustomTokenCurrency();
             
 
-            
             add_action( 'woocommerce_admin_field', 'my_custom_pricing_options_description', 10, 2 );
             
             function my_custom_pricing_options_description( $field, $key ) {
                 $default_description = get_option( 'woocommerce_price_display_suffix' );
+                error_log($default_description);
                 $custom_description = 'The currency option is currently set by Solpress Payment Gateway.';
                 
                 if ( 'pricing_options' === $key ) {
                     echo wp_kses_post( $default_description . ' ' . $custom_description );
-                    // echo '<p>My custom pricing options description goes here.</p>';
                 }
             }
             
