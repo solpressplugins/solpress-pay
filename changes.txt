@@ -1,3 +1,6 @@
+### 2023.02.24
+- Fixed issue with saving custom currency failing.
+
 ### 2023.02.21
 - Added fields for custom classes for payment buttons on the WC settings page.
 - Removed "green shield" that shows on successful transactions.
