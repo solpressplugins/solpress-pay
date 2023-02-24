@@ -138,6 +138,14 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             return $currency_symbol;
         }, 100, 2);
 
+        $result = update_option('woocommerce_currency', $token_symbol);
+
+        // Check if the update was successful
+        if ($result === false) {
+            // The update failed, handle the error here
+            error_log('Error: Failed to update woocommerce_currency option');
+        }
+
 
     }
 
