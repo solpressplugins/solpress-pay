@@ -116,6 +116,16 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             
 
             add_action( 'woocommerce_admin_field', 'my_custom_pricing_options_description', 10, 2 );
+            add_action( 'woocommerce_admin_field_pricing_options', 'my_custom_pricing_options');
+            
+            function my_custom_pricing_options(  ) {
+                $default_description = get_option( 'woocommerce_price_display_suffix' );
+                error_log($default_description);
+                $custom_description = 'The currency option is currently set by Solpress Payment Gateway.';
+                
+                echo wp_kses_post( $default_description . ' ' . $custom_description );
+
+            }
             
             function my_custom_pricing_options_description( $field, $key ) {
                 $default_description = get_option( 'woocommerce_price_display_suffix' );
