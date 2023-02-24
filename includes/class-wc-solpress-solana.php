@@ -113,7 +113,20 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
-        }        
+            
+            add_action( 'woocommerce_admin_field_pricing_options-description', 'my_custom_description' );
+        }      
+        
+
+
+        function my_custom_description() {
+            $default_description = get_option( 'woocommerce_price_display_suffix' );
+            $custom_description = 'The currency option is currently set by Solpress Payment Gateway.';
+        
+            // Output the combined description
+            echo wp_kses_post( $default_description . ' ' . $custom_description );
+        }
+              
 
     }
 
@@ -143,7 +156,11 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         // Check if the update was successful
         if ($result === false) {
             // The update failed, handle the error here
-            error_log('Error: Failed to update woocommerce_currency option');
+
+            $error_message = __( 'Failed to update woocommerce_currency option.' );
+            $error = new WP_Error( 'currency_update_failed', $error_message );
+            wp_die( esc_html( $error_message ) );
+
         }
 
 
@@ -345,7 +362,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             $end_point = 'https://api.devnet.solana.com';
             $transaction_token = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
         } else {
-            $end_point =  strlen($this->network_url) > 0 ? $this->network_url : $default_mainnet_rpc;
+            $end_point =  $this->network_url;
             $transaction_token = strlen($this->custom_spl_token) > 0 && $this->custom_spl_enabled !== 'no' ? $this->custom_spl_token : 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
         }
         // get random key to be sent as id
@@ -379,7 +396,6 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 $confirmed = wp_remote_post($end_point, $args);
                 if (!is_wp_error($confirmed)) {
                     $confirmed_body = isset($confirmed['body']) ? json_decode($confirmed['body'], true) : array();
-                    // $this->memo = $this->generate_memo();
                     $program_index = $confirmed_body['result']['transaction']['message']['instructions'][0]['programIdIndex'];
                     $program_account = $confirmed_body['result']['transaction']['message']['accountKeys'][$program_index];
 
