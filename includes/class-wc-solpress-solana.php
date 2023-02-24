@@ -149,7 +149,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                     break;
             }
             return $currency_symbol;
-        }, 100, 2);
+        }, 10, 2);
 
         $result = update_option('woocommerce_currency', $token_symbol);
 
@@ -159,7 +159,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
             $error_message = __( 'Failed to update woocommerce_currency option.' );
             $error = new WP_Error( 'currency_update_failed', $error_message );
-            wp_die( esc_html( $error_message ) );
+            wp_die( esc_html( $error ) );
 
         }
 
