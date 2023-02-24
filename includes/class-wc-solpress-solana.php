@@ -111,20 +111,17 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         // React root
         add_action('woocommerce_review_order_after_payment', array($this, 'add_wallets_root'));
 
+        add_action( 'woocommerce_admin_key_fields', 'my_custom_pricing_options_description' );
+
+        function my_custom_pricing_options_description( $key_data ) {
+            $default_description = get_option( 'woocommerce_price_display_suffix' );
+            var_dump($key_data);
+            error_log(print_r($key_data));
+            error_log(print_r($default_description));
+            wp_die();
+        }
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
-            
-
-            add_action( 'woocommerce_admin_key_fields', 'my_custom_pricing_options_description' );
-
-            
-            function my_custom_pricing_options_description( $key_data ) {
-                $default_description = get_option( 'woocommerce_price_display_suffix' );
-                error_log(print_r($key_data));
-                error_log(print_r($default_description));
-                
-            }
-            
 
         }      
         
