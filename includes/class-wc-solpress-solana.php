@@ -136,7 +136,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                     break;
             }
             return $currency_symbol;
-        }, 40, 2);
+        }, 100, 2);
 
 
     }
