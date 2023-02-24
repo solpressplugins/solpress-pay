@@ -114,20 +114,23 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
             
-            add_action( 'woocommerce_admin_field_pricing_options-description', 'my_custom_description' );
+
+            
+            add_action( 'woocommerce_admin_field', 'my_custom_pricing_options_description', 10, 2 );
+            
+            function my_custom_pricing_options_description( $field, $key ) {
+                $default_description = get_option( 'woocommerce_price_display_suffix' );
+                $custom_description = 'The currency option is currently set by Solpress Payment Gateway.';
+                
+                if ( 'pricing_options' === $key ) {
+                    echo wp_kses_post( $default_description . ' ' . $custom_description );
+                    // echo '<p>My custom pricing options description goes here.</p>';
+                }
+            }
+            
+
         }      
         
-
-
-        function my_custom_description() {
-            $default_description = get_option( 'woocommerce_price_display_suffix' );
-            $custom_description = 'The currency option is currently set by Solpress Payment Gateway.';
-        
-            // Output the combined description
-            echo wp_kses_post( $default_description . ' ' . $custom_description );
-        }
-              
-
     }
 
     private function addCustomTokenCurrency()
@@ -151,7 +154,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
             return $currency_symbol;
         }, 10, 2);
 
-        $result = update_option('woocommerce_currency', $token_symbol);
+        update_option('woocommerce_currency', $token_symbol);
 
     }
 
