@@ -113,21 +113,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
-        }
-        function my_custom_currency_symbol($currency_symbol, $currency) {
-            // Get the backtrace information
-            $trace = debug_backtrace();
-        
-            // Print the backtrace information to the debug log
-            error_log('Backtrace for woocommerce_currency_symbol filter:');
-            error_log($currency);
-            error_log(print_r($trace, true));
-        
-            // Return the currency symbol as usual
-            return $currency_symbol;
-        }
-        add_filter('woocommerce_currency_symbol', 'my_custom_currency_symbol', 10, 2);
-        
+        }        
 
     }
 
