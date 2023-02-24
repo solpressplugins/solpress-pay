@@ -114,6 +114,20 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
         }
+        function my_custom_currency_symbol($currency_symbol, $currency) {
+            // Get the backtrace information
+            $trace = debug_backtrace();
+        
+            // Print the backtrace information to the debug log
+            error_log('Backtrace for woocommerce_currency_symbol filter:');
+            error_log($currency);
+            error_log(print_r($trace, true));
+        
+            // Return the currency symbol as usual
+            return $currency_symbol;
+        }
+        add_filter('woocommerce_currency_symbol', 'my_custom_currency_symbol', 10, 2);
+        
 
     }
 
@@ -124,14 +138,14 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         /**
          * Custom currency and currency symbol
          */
-        add_filter('woocommerce_currencies', function($currencies) use ($token_name){
-            $currencies['CSPLT'] = __( $token_name , 'woocommerce');
+        add_filter('woocommerce_currencies', function($currencies) use ($token_name, $token_symbol){
+            $currencies[$token_symbol] = __( $token_name , 'woocommerce');
             return $currencies;
         });
 
         add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) use($token_symbol) {
             switch ($currency) {
-                case 'CSPLT':
+                case $token_symbol:
                     $currency_symbol = $token_symbol;
                     break;
             }
