@@ -1,3 +1,5 @@
+### 2023.02.28
+- Fixing file conflicts caused by version updates. 
 ### 2023.02.24
 - Fixed issue with saving custom currency failing.
 

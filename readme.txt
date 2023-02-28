@@ -1,7 +1,7 @@
 === SolPress WooCommerce Payment Gateway ===
 Contributors: solpressplugins
 Donate link: https://solpress.dev
-Tags: solana pay, woocommerce, payment, payment gateway, solana, crypto, phantom, phantom wallet
+Tags: solana pay, woocommerce, payment, payment gateway, solana, crypto, phantom, phantom wallet, crypto payment, crypto woocommerce, payment crypto
 Requires at least: 4.7
 Tested up to: 6.1
 Stable tag: 2.0.0
@@ -46,3 +46,5 @@ You can learn more on Solpress.dev and Solanapay.com
 
 = 1.0 =
 * Initial launch of plugin supporting Phantom wallet and USDC on Solana.
+
+Read `./changes.txt` for bug fixes.
