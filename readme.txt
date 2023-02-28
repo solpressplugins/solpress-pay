@@ -45,6 +45,6 @@ You can learn more on Solpress.dev and Solanapay.com
 * Various other bug fixes
 
 = 1.0 =
-* Initial launch of plugin supporting Phantom wallet and USDC on Solana.
+* Initial launch of plugin supporting Phantom wallet and USDC on Solana. 
 
 Read `./changes.txt` for bug fixes.
