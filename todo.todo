@@ -1,0 +1,2 @@
+* The WC_Order::reduce_order_stock function is deprecated since version 3.0. Replace with wc_reduce_stock_levels.
+
