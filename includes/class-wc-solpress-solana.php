@@ -121,7 +121,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         
     }
 
-    private function my_custom_pricing_options_description( ) {
+    public function my_custom_pricing_options_description( ) {
         ?>
         <p><?php echo esc_html( 'The currency is set by Solpress Payment Gateway.' ); ?></p>
         <?php

@@ -1,5 +1,9 @@
+### 2023.03.01
+- Fixed fatal error that occurs when saving options due to previously declared function `my_custom_pricing_options_description`
+
 ### 2023.02.28
-- Fixing file conflicts caused by version updates. 
+- Fixing file conflicts caused by version updates.
+
 ### 2023.02.24
 - Fixed issue with saving custom currency failing.
 
