@@ -111,18 +111,20 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         // React root
         add_action('woocommerce_review_order_after_payment', array($this, 'add_wallets_root'));
 
+
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
             $this->addCustomTokenCurrency();
 
-            add_action( 'woocommerce_settings_pricing_options', 'my_custom_pricing_options_description' );
-            function my_custom_pricing_options_description( ) {
-                ?>
-                <p><?php echo esc_html( 'The currency is set by Solpress Payment Gateway.' ); ?></p>
-                <?php
-                
-            }
+            add_action( 'woocommerce_settings_pricing_options', array( $this, 'my_custom_pricing_options_description') );
 
         }      
+        
+    }
+
+    private function my_custom_pricing_options_description( ) {
+        ?>
+        <p><?php echo esc_html( 'The currency is set by Solpress Payment Gateway.' ); ?></p>
+        <?php
         
     }
 
