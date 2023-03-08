@@ -4,7 +4,7 @@ Donate link: https://solpress.dev
 Tags: solana pay, woocommerce, crypto payment, payment gateway, solana, crypto, phantom, phantom wallet, crypto woocommerce, payment crypto
 Requires at least: 4.7
 Tested up to: 6.1
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

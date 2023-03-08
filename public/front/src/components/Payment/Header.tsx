@@ -14,7 +14,6 @@ function Header() {
 
   return (
     <header id="solpress-header" className="solpress__header solpress__payment-control">
-      <h2 className="solpress__header__heading">{__("Pay With Solpress")}</h2>
       <p className="solpress__header__warning">
         <strong>
           {__(
