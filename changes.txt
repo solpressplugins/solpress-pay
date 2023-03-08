@@ -1,5 +1,6 @@
 ### 2023.03.08
 - Removed "Pay with Solpress" header on checkout page
+
 ### 2023.03.01
 - Fixed fatal error that occurs when saving options due to previously declared function `my_custom_pricing_options_description`
 

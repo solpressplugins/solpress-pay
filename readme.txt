@@ -4,7 +4,7 @@ Donate link: https://solpress.dev
 Tags: solana pay, woocommerce, crypto payment, payment gateway, solana, crypto, phantom, phantom wallet, crypto woocommerce, payment crypto
 Requires at least: 4.7
 Tested up to: 6.1
-Stable tag: 2.0.10
+Stable tag: 2.0.11
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -47,4 +47,29 @@ You can learn more on Solpress.dev and Solanapay.com
 = 1.0 =
 * Initial launch of plugin supporting Phantom wallet and USDC on Solana. 
 
-Read `./changes.txt` for bug fixes.
+= Bug Fixes =
+### 2023.03.08
+- Removed "Pay with Solpress" header on checkout page
+
+### 2023.03.01
+- Fixed fatal error that occurs when saving options due to previously declared function `my_custom_pricing_options_description`
+
+### 2023.02.28
+- Fixing file conflicts caused by version updates.
+
+### 2023.02.24
+- Fixed issue with saving custom currency failing.
+
+### 2023.02.21
+- Added fields for custom classes for payment buttons on the WC settings page.
+- Removed "green shield" that shows on successful transactions.
+- Change default RPC from mainnet-beta to extrnode.
+- Fixed the dimension of the QR code rendered. 
+- Fixed displaying a loader when "Pay here" button is clicked  
+
+### 2023.01.15
+- Moved bash script files into /utils
+- Added User/Custom SPL token support. 
+- Custom SPL token Symbol and Name is appended to existing available currencies list
+- Now Validating transactions using User supplied RPC
+- Enabled More Adapters
