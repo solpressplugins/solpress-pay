@@ -45,7 +45,11 @@ module.exports = function override(config, env) {
         assert: require.resolve("assert"),
         buffer: require.resolve("buffer"),
         stream: require.resolve("stream-browserify"),
-        "crypto": require.resolve("crypto-browserify")
+        "crypto": require.resolve("crypto-browserify"),
+        "http": require.resolve("stream-http"),
+        "https": require.resolve("https-browserify"),
+        "zlib": false,
+        "url": false,
       },
     },
     output: {
