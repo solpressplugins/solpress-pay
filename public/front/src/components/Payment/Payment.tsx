@@ -31,11 +31,12 @@ import {
   parseURL,
   TransferRequestURL,
   TransferRequestURLFields,
-  validateTransfer,
   ValidateTransferError,
   ValidateTransferFields,
 } from "@solana/pay";
 import BigNumber from "bignumber.js";
+
+import {validateTransfer} from './validateTransfer'
 
 import { SolpressAPI } from "../../api/SolPressAPI";
 
