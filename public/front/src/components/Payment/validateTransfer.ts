@@ -73,14 +73,7 @@ export async function validateTransfer(
   const transaction = Transaction.populate(message, signatures);
   const instructions = transaction.instructions.slice();
 
-  // console log every instruction.programId.toString()
-  instructions.forEach((instruction) => { 
-    console.log(instruction.programId.toString());
-  });
-
-  
-
-  // Transfer instruction must be the last instruction
+  // Transfer instruction must be the first instruction
   const instruction = instructions.shift();
   if (!instruction) throw new ValidateTransferError('missing transfer instruction');
   const [preAmount, postAmount] = splToken
