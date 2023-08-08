@@ -38,6 +38,9 @@ You can learn more on Solpress.dev and Solanapay.com
 
 == Changelog ==
 
+= 2.0.15 =
+* Fixed updated Phantom Wallet transaction failures on Desktop.
+
 = 2.0 =
 * Added support for all popular Solana Wallets via Wallet Adapter
 * Added support for any SPL token
