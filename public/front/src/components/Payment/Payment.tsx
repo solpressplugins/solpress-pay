@@ -235,10 +235,7 @@ function Payment() {
           if (getSplTokenKey()) {
             options.splToken = getSplTokenKey();
           }
-          // @ts-ignore
-          remoteLogger({publicKey})
-          // @ts-ignore
-          remoteLogger(options)
+
           const tx = await createTransfer(connection, publicKey, options, { commitment: "processed"});
 
           /**
@@ -255,6 +252,8 @@ function Payment() {
       } catch (err: any) {
         console.log(err);
         console.log(err.stack);
+        // @ts-ignore
+        remoteLogger(err)
         addErrorAlert(err.message || err.toString());
       } finally {
         setTransactionStarted(false);
