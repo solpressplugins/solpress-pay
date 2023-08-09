@@ -71,7 +71,7 @@ function Payment() {
 
   // console.log("Connection: ", connection);
 
-  const { publicKey } = useWallet();
+  const { publicKey, signTransaction, sendTransaction } = useWallet();
   const {
     isTransactionDone,
     updateIsTransactionDone,
@@ -107,7 +107,7 @@ function Payment() {
         if (isAwaitingPayment !== "waiting") return;
         // Check if there is any transaction for the reference
         const signatureInfo = await findReference(connection, referenceKey, {
-          finality: "finalized",
+          finality: "confirmed",
         });
         // Validate that the transaction has the expected recipient, amount and SPL token
         const options: ValidateTransferFields = {
@@ -122,7 +122,7 @@ function Payment() {
           connection,
           signatureInfo.signature,
           options,
-          { commitment: "finalized" }
+          { commitment: "confirmed" }
         ).catch((err) => console.log(err));
 
         if (!isValid) return;
@@ -242,9 +242,22 @@ function Payment() {
           /**
            * Send the transaction to the network
            */
-          await window.solana.signAndSendTransaction(tx);
+          // await window.solana.signAndSendTransaction(tx);
+          if (signTransaction) {
+            const {
+              context: { slot: minContextSlot },
+              value: { blockhash, lastValidBlockHeight }
+          } = await connection.getLatestBlockhashAndContext();
 
-          setAwaitingPayment("waiting");
+
+            // await signTransaction(tx);
+            const signature =  await sendTransaction(tx, connection, { minContextSlot });
+            await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
+
+            setAwaitingPayment("waiting");
+          }
+
+
         }
 
           
