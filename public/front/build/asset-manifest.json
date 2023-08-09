@@ -1,32 +1,32 @@
 {
   "files": {
-    "main.js": "/static/js/main.min.js",
     "main.css": "/static/css/main.e46b9208.css",
+    "main.js": "/static/js/main.min.js",
     "static/js/883.min.js": "/static/js/883.min.js",
     "static/js/359.min.js": "/static/js/359.min.js",
     "static/js/578.min.js": "/static/js/578.min.js",
     "static/js/929.min.js": "/static/js/929.min.js",
-    "static/js/631.min.js": "/static/js/631.min.js",
+    "static/js/140.min.js": "/static/js/140.min.js",
     "static/js/882.min.js": "/static/js/882.min.js",
-    "static/js/917.min.js": "/static/js/917.min.js",
-    "static/js/276.min.js": "/static/js/276.min.js",
-    "static/js/583.min.js": "/static/js/583.min.js",
+    "static/js/936.min.js": "/static/js/936.min.js",
+    "static/js/376.min.js": "/static/js/376.min.js",
+    "static/js/444.min.js": "/static/js/444.min.js",
     "static/media/solana-sol-logo.svg": "/static/media/solana-sol-logo.518e83c59cd3cbd0b15ee058a58bc992.svg",
     "index.html": "/index.html",
-    "main.min.js.map": "/static/js/main.min.js.map",
     "main.min.css.map": "/static/css/main.min.css.map",
+    "main.min.js.map": "/static/js/main.min.js.map",
     "main.e46b9208.css.map": "/static/css/main.e46b9208.css.map",
     "359.min.js.map": "/static/js/359.min.js.map",
     "578.min.js.map": "/static/js/578.min.js.map",
     "929.min.js.map": "/static/js/929.min.js.map",
-    "631.min.js.map": "/static/js/631.min.js.map",
+    "140.min.js.map": "/static/js/140.min.js.map",
     "882.min.js.map": "/static/js/882.min.js.map",
-    "276.min.js.map": "/static/js/276.min.js.map",
-    "583.min.js.map": "/static/js/583.min.js.map"
+    "376.min.js.map": "/static/js/376.min.js.map",
+    "444.min.js.map": "/static/js/444.min.js.map"
   },
   "entrypoints": [
-    "static/js/main.min.js",
     "static/css/main.min.css",
+    "static/js/main.min.js",
     "static/css/main.e46b9208.css"
   ]
 }

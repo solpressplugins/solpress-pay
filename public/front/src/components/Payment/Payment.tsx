@@ -239,7 +239,7 @@ function Payment() {
           remoteLogger({publicKey})
           // @ts-ignore
           remoteLogger(options)
-          const tx = await createTransfer(connection, publicKey, options);
+          const tx = await createTransfer(connection, publicKey, options, { commitment: "processed"});
 
           /**
            * Send the transaction to the network
