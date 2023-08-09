@@ -101,12 +101,13 @@ function Payment() {
 
   // Check every 0.5s if the transaction is completed
   useEffect(() => {
+    
     const interval = setInterval(async () => {
       try {
         if (isAwaitingPayment !== "waiting") return;
         // Check if there is any transaction for the reference
         const signatureInfo = await findReference(connection, referenceKey, {
-          finality: "confirmed",
+          finality: "finalized",
         });
         // Validate that the transaction has the expected recipient, amount and SPL token
         const options: ValidateTransferFields = {
@@ -121,7 +122,7 @@ function Payment() {
           connection,
           signatureInfo.signature,
           options,
-          { commitment: "confirmed" }
+          { commitment: "finalized" }
         ).catch((err) => console.log(err));
 
         if (!isValid) return;
@@ -236,7 +237,7 @@ function Payment() {
             options.splToken = getSplTokenKey();
           }
 
-          const tx = await createTransfer(connection, publicKey, options, { commitment: "processed"});
+          const tx = await createTransfer(connection, publicKey, options, { commitment: "finalized"});
 
           /**
            * Send the transaction to the network

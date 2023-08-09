@@ -5,3 +5,5 @@ wp-vip-min.txt
 vendor
 release
 .vscode
+
+public/front/build/static/js/*.map
