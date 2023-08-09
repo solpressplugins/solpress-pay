@@ -446,7 +446,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
         // we received the payment
         $order->payment_complete();
-        $order->reduce_order_stock();
+        wc_reduce_stock_levels($order_id);
 
         // some notes to customer (replace true with false to make it private).
         $order->add_order_note(esc_html__('Hey, your order is paid! Thank you!, Order memo:' . $this->memo . ' And Transaction Link: ', 'solpress') . esc_url($solscan), true);

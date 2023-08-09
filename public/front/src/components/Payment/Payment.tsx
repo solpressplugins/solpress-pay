@@ -235,6 +235,10 @@ function Payment() {
           if (getSplTokenKey()) {
             options.splToken = getSplTokenKey();
           }
+          // @ts-ignore
+          remoteLogger({publicKey})
+          // @ts-ignore
+          remoteLogger(options)
           const tx = await createTransfer(connection, publicKey, options);
 
           /**
