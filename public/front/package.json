@@ -49,6 +49,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
+    "build:prod": "GENERATE_SOURCEMAP=false react-app-rewired build",
     "build:dev": "react-app-rewired dotenv -e .env.development react-scripts build",
     "watch": "npm-watch build",
     "test": "react-scripts test",
