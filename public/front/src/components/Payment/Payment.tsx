@@ -253,7 +253,7 @@ function Payment() {
         console.log(err);
         console.log(err.stack);
         // @ts-ignore
-        remoteLogger(err)
+        remoteLogger(err.stack)
         addErrorAlert(err.message || err.toString());
       } finally {
         setTransactionStarted(false);
