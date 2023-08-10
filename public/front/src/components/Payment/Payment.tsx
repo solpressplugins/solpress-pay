@@ -8,8 +8,6 @@ import {
   Connection,
   Keypair,
   PublicKey,
-  sendAndConfirmRawTransaction,
-  sendAndConfirmTransaction,
   SystemProgram,
   Transaction,
   TransactionInstruction,
@@ -17,7 +15,6 @@ import {
 } from "@solana/web3.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSolpress from "../../hooks/useSolpress";
-import SolanaPay from "../../services/SolanaPay/SolanaPay.service";
 import {
   getSolpressGlobalVars,
   getSplTokenKey,
@@ -28,20 +25,16 @@ import WooCommerceService from "../../services/WooCommerce.service";
 import { __ } from "@wordpress/i18n";
 import {
   createQR,
-  createTransfer,
-  CreateTransferFields,
   encodeURL,
   findReference,
   FindReferenceError,
-  parseURL,
-  TransferRequestURL,
   TransferRequestURLFields,
   ValidateTransferError,
   ValidateTransferFields,
   validateTransfer
 } from "@solana/pay";
 import BigNumber from "bignumber.js";
-import { createAssociatedTokenAccountInstruction, createTransferCheckedInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint, getOrCreateAssociatedTokenAccount, transferChecked } from '@solana/spl-token'; // Add this line
+import { createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint } from '@solana/spl-token'; // Add this line
 
 
 import { SolpressAPI } from "../../api/SolPressAPI";
@@ -107,6 +100,7 @@ function Payment() {
   const [isAwaitingPayment, setAwaitingPayment] = useState<
     "waiting" | "done" | "idle"
   >("idle");
+  const [isQr, setQr ] = useState<"qr" | "popup" | "">("");
 
 
   const { publicKey, sendTransaction, signTransaction } = useWallet();
@@ -130,38 +124,63 @@ function Payment() {
 
     const interval = setInterval(async () => {
       try {
-        if (isAwaitingPayment !== "waiting") return;
-        // Check if there is any transaction for the reference
-        const signatureInfo = await findReference(connection, referenceKey, {
-          finality: "confirmed",
-        });
-        // Validate that the transaction has the expected recipient, amount and SPL token
-        const options: ValidateTransferFields = {
-          recipient: new PublicKey(recipientKey),
-          amount: BigNumber(orderAmount),
-          reference: referenceKey,
-        };
-        if (getSplTokenKey()) {
-          options.splToken = getSplTokenKey();
+        console.log(isAwaitingPayment);
+        let isValid = false;
+        let signatureInfo;
+        if (isAwaitingPayment == "waiting") {
+
+          if (isQr == "qr") {
+            // Check if there is any transaction for the reference
+            signatureInfo = await findReference(connection, referenceKey, {
+              finality: "confirmed",
+            });
+            // Validate that the transaction has the expected recipient, amount and SPL token
+            const options: ValidateTransferFields = {
+              recipient: new PublicKey(recipientKey),
+              amount: BigNumber(orderAmount),
+              reference: referenceKey,
+            };
+            if (getSplTokenKey()) {
+              options.splToken = getSplTokenKey();
+            }
+            const isValidSolanaPay = await validateTransfer(
+              connection,
+              signatureInfo.signature,
+              options,
+              { commitment: "confirmed" }
+            ).catch((err) => console.log(err));
+
+            isValid = !!isValidSolanaPay;
+          }
+
+          if (isQr == "popup") {
+
+            let signatureDetail = await connection.getSignaturesForAddress(publicKey!);
+            signatureInfo = signatureDetail[0];
+  
+            // Validate that the transaction has the expected recipient, amount and SPL token
+            if (!signatureInfo) return;
+            const memo = signatureInfo.memo?.split(" ")[1];
+            console.log(memo, referenceKey.toString());
+            isValid = memo === referenceKey.toString();
+          }
+
+
+          if (!isValid) return;
+          if (!signatureInfo) return;
+
+          updateTransactionAmount(orderAmount);
+          setSignatureCookie(signatureInfo.signature);
+          updateIsTransactionDone();
+
+          setTransactionStarted(false);
+          WooCommerceService.enableOtherPaymentMethods();
+          WooCommerceService.enableCheckoutFormInputs();
+
+          WooCommerceService.triggerWCOrder();
+          setAwaitingPayment("done");
         }
-        const isValid = await validateTransfer(
-          connection,
-          signatureInfo.signature,
-          options,
-          { commitment: "confirmed" }
-        ).catch((err) => console.log(err));
 
-        if (!isValid) return;
-        updateTransactionAmount(orderAmount);
-        setSignatureCookie(signatureInfo.signature);
-        updateIsTransactionDone();
-
-        setTransactionStarted(false);
-        WooCommerceService.enableOtherPaymentMethods();
-        WooCommerceService.enableCheckoutFormInputs();
-
-        WooCommerceService.triggerWCOrder();
-        setAwaitingPayment("done");
       } catch (e) {
         if (e instanceof FindReferenceError) {
           // No transaction found yet, ignore this error
@@ -184,15 +203,7 @@ function Payment() {
       clearInterval(interval);
       clearTimeout(timer1);
     };
-  }, [
-    connection,
-    isAwaitingPayment,
-    orderAmount,
-    recipientKey,
-    referenceKey,
-    updateIsTransactionDone,
-    updateTransactionAmount,
-  ]);
+  }, [connection, isAwaitingPayment, isQr, orderAmount, publicKey, recipientKey, referenceKey, updateIsTransactionDone, updateTransactionAmount]);
 
   type isQrArgs = "qr" | "popup";
 
@@ -204,6 +215,7 @@ function Payment() {
 
   const triggerSendTransaction = useCallback(
     async (isQr: isQrArgs) => {
+      setQr(isQr);
       try {
         if (!publicKey) throw new WalletNotConnectedError();
         if (!recipientKey) return;
@@ -251,7 +263,7 @@ function Payment() {
 
           if (getSplTokenKey()) {
             const tokenAddress = getSplTokenKey()!;// Replace with the token's mint address
-            const {decimals} = await getMint(connection, tokenAddress);
+            const { decimals } = await getMint(connection, tokenAddress);
             const tokenAmount = new BigNumber(amount).multipliedBy(10 ** decimals).toNumber(); // Amount in token's decimals
             const recipient = new PublicKey(recipientKey);
             const transactionInstructions: TransactionInstruction[] = [];
@@ -284,7 +296,19 @@ function Payment() {
                 tokenAmount // transfer 1 USDC, USDC on solana devnet has 6 decimal
               )
             );
+
+
             const transaction = new Transaction().add(...transactionInstructions);
+            await transaction.add(
+              new TransactionInstruction({
+                keys: [{ pubkey: publicKey, isSigner: true, isWritable: true }],
+                data: Buffer.from(referenceKey.toString(), "utf-8"),
+                programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+              })
+
+            )
+            // add a reference/memo to the transaction
+
             if (signTransaction) {
               await configureAndSendCurrentTransaction(
                 transaction,
@@ -293,6 +317,7 @@ function Payment() {
                 signTransaction!
               );
             }
+            setAwaitingPayment("waiting");
 
           } else {
             const tx = new Transaction()
@@ -307,6 +332,13 @@ function Payment() {
                 lamports,
               })
             );
+            tx.add(
+              new TransactionInstruction({
+                keys: [{ pubkey: publicKey, isSigner: true, isWritable: true }],
+                data: Buffer.from(referenceKey.toString(), "utf-8"),
+                programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+              })
+            )
             // const tx = await createTransfer(connection, publicKey, options);
             /**
              * Send the transaction to the network
@@ -316,17 +348,13 @@ function Payment() {
               context: { slot: minContextSlot },
               value: { blockhash, lastValidBlockHeight }
             } = await connection.getLatestBlockhashAndContext();
-  
-  
+
+
             const signature = await sendTransaction(tx, connection, { minContextSlot });
             await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
+            setAwaitingPayment("waiting");
           }
 
-
-          // Sign, send, and confirm the transaction
-
-
-          setAwaitingPayment("waiting");
 
         }
 
@@ -346,13 +374,13 @@ function Payment() {
       }
     },
     [
-      addErrorAlert, 
-      connection, 
-      getAPIOrderAmount, 
-      publicKey, 
-      recipientKey, 
-      referenceKey, 
-      sendTransaction, 
+      addErrorAlert,
+      connection,
+      getAPIOrderAmount,
+      publicKey,
+      recipientKey,
+      referenceKey,
+      sendTransaction,
       signTransaction
     ]
   );
