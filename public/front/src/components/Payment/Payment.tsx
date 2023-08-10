@@ -2,15 +2,17 @@ import Header from "./Header";
 import PayButton from "./PayButton/PayButton";
 import TransactionSuccess from "./PaymentSuccess/TransactionSuccess";
 
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import { SignerWalletAdapterProps, WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
+  Connection,
   Keypair,
   PublicKey,
   sendAndConfirmRawTransaction,
   sendAndConfirmTransaction,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
   TransactionSignature,
 } from "@solana/web3.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -39,6 +41,7 @@ import {
   validateTransfer
 } from "@solana/pay";
 import BigNumber from "bignumber.js";
+import { createAssociatedTokenAccountInstruction, createTransferCheckedInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress, getMint, getOrCreateAssociatedTokenAccount, transferChecked } from '@solana/spl-token'; // Add this line
 
 
 import { SolpressAPI } from "../../api/SolPressAPI";
@@ -66,14 +69,31 @@ const PayButtons = ({
   ) : null;
 };
 
+export const configureAndSendCurrentTransaction = async (
+  transaction: Transaction,
+  connection: Connection,
+  feePayer: PublicKey,
+  signTransaction: SignerWalletAdapterProps['signTransaction']
+) => {
+  const blockHash = await connection.getLatestBlockhash();
+  transaction.feePayer = feePayer;
+  transaction.recentBlockhash = blockHash.blockhash;
+  const signed = await signTransaction(transaction);
+  const signature = await connection.sendRawTransaction(signed.serialize());
+  await connection.confirmTransaction({
+    blockhash: blockHash.blockhash,
+    lastValidBlockHeight: blockHash.lastValidBlockHeight,
+    signature
+  });
+  return signature;
+};
+
 
 function Payment() {
   // const [connection] = useState(SolanaPay.createConnection());
   const { connection } = useConnection();
 
   const qrRef = useRef<HTMLDivElement>(null);
-
-  // console.log("Connection: ", connection);
 
   const {
     isTransactionDone,
@@ -85,11 +105,11 @@ function Payment() {
   const [transactionStarted, setTransactionStarted] = useState(false);
   const [orderAmount, setOrderAmount] = useState(0);
   const [isAwaitingPayment, setAwaitingPayment] = useState<
-  "waiting" | "done" | "idle"
+    "waiting" | "done" | "idle"
   >("idle");
 
 
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey, sendTransaction, signTransaction } = useWallet();
 
   const recipientKey = useMemo(() => getSolpressGlobalVars().to_public_key, []);
 
@@ -107,7 +127,7 @@ function Payment() {
 
   // Check every 0.5s if the transaction is completed
   useEffect(() => {
-    
+
     const interval = setInterval(async () => {
       try {
         if (isAwaitingPayment !== "waiting") return;
@@ -191,13 +211,14 @@ function Payment() {
 
         WooCommerceService.disableOtherPaymentMethods();
         WooCommerceService.disableCheckoutFormInputs();
-        
+
         // Validating WC checkout form
         WooCommerceService.validateWCCheckoutForm();
-        
+
         const amount = await getAPIOrderAmount().catch((err) => console.log(err));
         if (!amount) return
         setOrderAmount(amount);
+
         const urlParams: TransferRequestURLFields = {
           recipient: new PublicKey(recipientKey),
           amount: BigNumber(amount),
@@ -215,7 +236,7 @@ function Payment() {
 
         const sectionWidth = document.querySelector('.solpress-payment-root')?.clientWidth
 
-        const qr = createQR(url, sectionWidth ||  512, "transparent");
+        const qr = createQR(url, sectionWidth || 512, "transparent");
 
         if (qrRef.current) {
           qrRef.current.innerHTML = "";
@@ -227,55 +248,89 @@ function Payment() {
         }
 
         if (isQr === "popup") {
-          const {
-            amount: orderAmount,
-          } = parseURL(url) as TransferRequestURL;
 
-          /**
-           * Create the transaction with the parameters decoded from the URL
-           */
-          const options: CreateTransferFields = {
-            recipient: new PublicKey(recipientKey),
-            amount: orderAmount!,
-            reference: referenceKey,
-          };
           if (getSplTokenKey()) {
-            options.splToken = getSplTokenKey();
-          }
+            const tokenAddress = getSplTokenKey()!;// Replace with the token's mint address
+            const {decimals} = await getMint(connection, tokenAddress);
+            const tokenAmount = new BigNumber(amount).multipliedBy(10 ** decimals).toNumber(); // Amount in token's decimals
+            const recipient = new PublicKey(recipientKey);
+            const transactionInstructions: TransactionInstruction[] = [];
 
-          // const tx = await createTransfer(connection, publicKey, options);
+            const associatedTokenFrom = await getAssociatedTokenAddress(
+              tokenAddress,
+              publicKey
+            );
+            const fromAccount = await getAccount(connection, associatedTokenFrom);
+            const associatedTokenTo = await getAssociatedTokenAddress(
+              tokenAddress,
+              recipient
+            );
 
-          // convert orderAmount to lamports
-          const lamports = 20000;
-          const tx = new Transaction().add(
-            SystemProgram.transfer({
+            if (!(await connection.getAccountInfo(associatedTokenTo))) {
+              transactionInstructions.push(
+                createAssociatedTokenAccountInstruction(
+                  publicKey,
+                  associatedTokenTo,
+                  recipient,
+                  tokenAddress
+                )
+              );
+            }
+            transactionInstructions.push(
+              createTransferInstruction(
+                fromAccount.address, // source
+                associatedTokenTo, // dest
+                publicKey,
+                tokenAmount // transfer 1 USDC, USDC on solana devnet has 6 decimal
+              )
+            );
+            const transaction = new Transaction().add(...transactionInstructions);
+            if (signTransaction) {
+              await configureAndSendCurrentTransaction(
+                transaction,
+                connection,
+                publicKey,
+                signTransaction!
+              );
+            }
+
+          } else {
+            const tx = new Transaction()
+
+            const lamports = new BigNumber(amount).multipliedBy(
+              Math.pow(10, 9)
+            ).toNumber();
+            tx.add(
+              SystemProgram.transfer({
                 fromPubkey: publicKey,
                 toPubkey: new PublicKey(recipientKey),
                 lamports,
-            })
-        );
+              })
+            );
+            // const tx = await createTransfer(connection, publicKey, options);
+            /**
+             * Send the transaction to the network
+             */
+            // await window.solana.signAndSendTransaction(tx);
+            const {
+              context: { slot: minContextSlot },
+              value: { blockhash, lastValidBlockHeight }
+            } = await connection.getLatestBlockhashAndContext();
+  
+  
+            const signature = await sendTransaction(tx, connection, { minContextSlot });
+            await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
+          }
 
-          /**
-           * Send the transaction to the network
-           */
-          // await window.solana.signAndSendTransaction(tx);
-          const {
-            context: { slot: minContextSlot },
-            value: { blockhash, lastValidBlockHeight }
-        } = await connection.getLatestBlockhashAndContext();
 
-
-          const signature =  await sendTransaction(tx, connection, { minContextSlot });
-          await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
-
-              // Sign, send, and confirm the transaction
+          // Sign, send, and confirm the transaction
 
 
           setAwaitingPayment("waiting");
 
         }
 
-          
+
 
         // return;
       } catch (err: any) {
@@ -290,7 +345,16 @@ function Payment() {
         WooCommerceService.enableCheckoutFormInputs();
       }
     },
-    [addErrorAlert, connection, getAPIOrderAmount, publicKey, recipientKey, referenceKey]
+    [
+      addErrorAlert, 
+      connection, 
+      getAPIOrderAmount, 
+      publicKey, 
+      recipientKey, 
+      referenceKey, 
+      sendTransaction, 
+      signTransaction
+    ]
   );
 
   const successMessageJSX =
