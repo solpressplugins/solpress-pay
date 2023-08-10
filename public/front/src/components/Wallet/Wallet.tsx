@@ -26,10 +26,14 @@ import {
   ExodusWalletAdapter,
   CoinbaseWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
-import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import SolanaPay from "../../services/SolanaPay/SolanaPay.service";
 import Payment from "../Payment/Payment";
 import useSolpress from "../../hooks/useSolpress";
+import {
+  WalletModalProvider,
+  WalletDisconnectButton,
+  WalletMultiButton
+} from '@solana/wallet-adapter-react-ui';
 
 // Default styles that can be overridden by your app
 import "@solana/wallet-adapter-react-ui/styles.css";
@@ -84,10 +88,11 @@ function Wallet() {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets}>
+      <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <Payment />
           {!isTransactionDone ? <WalletMultiButton /> : null}
+          <WalletDisconnectButton />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

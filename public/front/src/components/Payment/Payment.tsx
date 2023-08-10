@@ -3,11 +3,14 @@ import PayButton from "./PayButton/PayButton";
 import TransactionSuccess from "./PaymentSuccess/TransactionSuccess";
 
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   Keypair,
   PublicKey,
+  sendAndConfirmRawTransaction,
   sendAndConfirmTransaction,
+  SystemProgram,
+  Transaction,
   TransactionSignature,
 } from "@solana/web3.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -65,13 +68,13 @@ const PayButtons = ({
 
 
 function Payment() {
-  const [connection] = useState(SolanaPay.createConnection());
+  // const [connection] = useState(SolanaPay.createConnection());
+  const { connection } = useConnection();
 
   const qrRef = useRef<HTMLDivElement>(null);
 
   // console.log("Connection: ", connection);
 
-  const { publicKey, signTransaction, sendTransaction } = useWallet();
   const {
     isTransactionDone,
     updateIsTransactionDone,
@@ -82,8 +85,11 @@ function Payment() {
   const [transactionStarted, setTransactionStarted] = useState(false);
   const [orderAmount, setOrderAmount] = useState(0);
   const [isAwaitingPayment, setAwaitingPayment] = useState<
-    "waiting" | "done" | "idle"
+  "waiting" | "done" | "idle"
   >("idle");
+
+
+  const { publicKey, sendTransaction } = useWallet();
 
   const recipientKey = useMemo(() => getSolpressGlobalVars().to_public_key, []);
 
@@ -237,26 +243,35 @@ function Payment() {
             options.splToken = getSplTokenKey();
           }
 
-          const tx = await createTransfer(connection, publicKey, options, { commitment: "finalized"});
+          // const tx = await createTransfer(connection, publicKey, options);
+
+          // convert orderAmount to lamports
+          const lamports = 20000;
+          const tx = new Transaction().add(
+            SystemProgram.transfer({
+                fromPubkey: publicKey,
+                toPubkey: new PublicKey(recipientKey),
+                lamports,
+            })
+        );
 
           /**
            * Send the transaction to the network
            */
           // await window.solana.signAndSendTransaction(tx);
-          if (signTransaction) {
-            const {
-              context: { slot: minContextSlot },
-              value: { blockhash, lastValidBlockHeight }
-          } = await connection.getLatestBlockhashAndContext();
+          const {
+            context: { slot: minContextSlot },
+            value: { blockhash, lastValidBlockHeight }
+        } = await connection.getLatestBlockhashAndContext();
 
 
-            // await signTransaction(tx);
-            const signature =  await sendTransaction(tx, connection, { minContextSlot });
-            await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
+          const signature =  await sendTransaction(tx, connection, { minContextSlot });
+          await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
-            setAwaitingPayment("waiting");
-          }
+              // Sign, send, and confirm the transaction
 
+
+          setAwaitingPayment("waiting");
 
         }
 
