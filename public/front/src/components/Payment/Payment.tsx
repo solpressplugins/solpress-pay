@@ -197,7 +197,7 @@ function Payment() {
 
     let timer1 = setTimeout(() => {
       clearInterval(interval);
-    }, 30000);
+    }, 120000);
 
     return () => {
       clearInterval(interval);

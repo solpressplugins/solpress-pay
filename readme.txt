@@ -38,8 +38,11 @@ You can learn more on Solpress.dev and Solanapay.com
 
 == Changelog ==
 
-= 2.0.15 =
-* Fixed updated Phantom Wallet transaction failures on Desktop.
+= 2.0.27 =
+* Fixed Phantom Wallet transaction failures on Desktop.
+* Fixed Phanom Wallet transaction failures on Mobile.
+* Updated code to use Wallet Standard.
+* Added disconnect button.
 
 = 2.0 =
 * Added support for all popular Solana Wallets via Wallet Adapter
