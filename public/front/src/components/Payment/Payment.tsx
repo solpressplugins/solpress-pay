@@ -100,7 +100,7 @@ function Payment() {
   const [isAwaitingPayment, setAwaitingPayment] = useState<
     "waiting" | "done" | "idle"
   >("idle");
-  const [isQr, setQr ] = useState<"qr" | "popup" | "">("");
+  const [isQr, setQr] = useState<"qr" | "popup" | "">("");
 
 
   const { publicKey, sendTransaction, signTransaction } = useWallet();
@@ -120,14 +120,35 @@ function Payment() {
   }, [publicKey]);
 
   // Check every 0.5s if the transaction is completed
-  useEffect(() => {
 
+  // wrap isDone in useCallback to avoid infinite loop
+  const isDone = useCallback(
+    (isValid: boolean, signatureInfo: any, orderAmount: number) => {
+      if (!isValid) return;
+      if (!signatureInfo) return;
+
+      updateTransactionAmount(orderAmount);
+      setSignatureCookie(signatureInfo.signature);
+      updateIsTransactionDone();
+
+      setTransactionStarted(false);
+      WooCommerceService.enableOtherPaymentMethods();
+      WooCommerceService.enableCheckoutFormInputs();
+
+      WooCommerceService.triggerWCOrder();
+      setAwaitingPayment("done");
+
+    }, [updateIsTransactionDone, updateTransactionAmount, setAwaitingPayment, setTransactionStarted]);
+
+  useEffect(() => {
+    const CHECK_TRANSACTION_INTERVAL = 800;
     const interval = setInterval(async () => {
       try {
-        console.log(isAwaitingPayment);
         let isValid = false;
         let signatureInfo;
-        if (isAwaitingPayment == "waiting") {
+
+
+        if (isAwaitingPayment === "waiting") {
 
           if (isQr == "qr") {
             // Check if there is any transaction for the reference
@@ -151,34 +172,26 @@ function Payment() {
             ).catch((err) => console.log(err));
 
             isValid = !!isValidSolanaPay;
+
+            isDone(isValid, signatureInfo, orderAmount);
           }
 
           if (isQr == "popup") {
 
             let signatureDetail = await connection.getSignaturesForAddress(publicKey!);
             signatureInfo = signatureDetail[0];
-  
+
             // Validate that the transaction has the expected recipient, amount and SPL token
             if (!signatureInfo) return;
             const memo = signatureInfo.memo?.split(" ")[1];
-            console.log(memo, referenceKey.toString());
+            // console.log(memo, referenceKey.toString());
             isValid = memo === referenceKey.toString();
+
+            isDone(isValid, signatureInfo, orderAmount);
           }
 
 
-          if (!isValid) return;
-          if (!signatureInfo) return;
 
-          updateTransactionAmount(orderAmount);
-          setSignatureCookie(signatureInfo.signature);
-          updateIsTransactionDone();
-
-          setTransactionStarted(false);
-          WooCommerceService.enableOtherPaymentMethods();
-          WooCommerceService.enableCheckoutFormInputs();
-
-          WooCommerceService.triggerWCOrder();
-          setAwaitingPayment("done");
         }
 
       } catch (e) {
@@ -193,11 +206,12 @@ function Payment() {
         }
         console.error("Unknown error", e);
       }
-    }, 5000);
+    }, CHECK_TRANSACTION_INTERVAL);
 
+    const MAX_CHECK_TRANSACTION_TIME = 60 * 1000 * 10;
     let timer1 = setTimeout(() => {
       clearInterval(interval);
-    }, 120000);
+    }, MAX_CHECK_TRANSACTION_TIME);
 
     return () => {
       clearInterval(interval);
