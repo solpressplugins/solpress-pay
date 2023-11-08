@@ -344,6 +344,18 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
      */
     public function validate_fields()
     {
+        function lamportsToSOL($lamports) {
+            return $lamports / 1000000000; 
+        }
+        function find_parsed_instruction($array) {
+            foreach ($array as $element) {
+                if ($element && isset($element['parsed']) && isset($element['program'])) {
+                    return $element;
+                }
+            }
+            return null; // Return null if no match is found
+        }
+
         // if we need to validate anything here.
         if ($this->testmode) {
             $end_point = 'https://api.devnet.solana.com';
@@ -355,7 +367,6 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
         // get random key to be sent as id
         $this->random_key = random_int(0, 99999999);
         $this->signature = isset($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) ? sanitize_text_field($_COOKIE[SOLPRESS_SIGNATURE_STORAGE]) : '';
-
         if ($this->signature) {
             // put the request body and headers
             $body = array(
@@ -364,6 +375,11 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 'method' => 'getTransaction',
                 'params' => array(
                     $this->signature,
+                    [
+                        "commitment" => "finalized",
+                        "encoding" => "jsonParsed",
+                        "maxSupportedTransactionVersion" => 0
+                    ]
                 ),
             );
 
@@ -382,30 +398,38 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                 sleep(3);
                 $confirmed = wp_remote_post($end_point, $args);
                 if (!is_wp_error($confirmed)) {
-                    $confirmed_body = isset($confirmed['body']) ? json_decode($confirmed['body'], true) : array();
-                    $program_index = $confirmed_body['result']['transaction']['message']['instructions'][0]['programIdIndex'];
-                    $program_account = $confirmed_body['result']['transaction']['message']['accountKeys'][$program_index];
-
-                    if ($program_account === "11111111111111111111111111111111" && $transaction_token === "So11111111111111111111111111111111111111112") {
-                        // @todo: compare amounts also.
-                        $request_retry_count = $max_request_retries + 10;
-                    }
-
-                    if (!isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint'])) {
+                    $confirmed_body = wp_remote_retrieve_body($confirmed);
+                    $confirmed_body = json_decode($confirmed_body, true);
+                    if ($confirmed_body['result'] !== null) {
+    
+                        $program_index = $confirmed_body['result']['transaction']['message']['instructions'][0]['programIdIndex'];
+                        $program_instructions = $confirmed_body['result']['transaction']['message']['instructions'];
+                        $parsed_instruction = find_parsed_instruction($program_instructions);
+                        if ($parsed_instruction) {
+                            $info = $parsed_instruction['parsed']['info'];
+                            $tx_type = $parsed_instruction['parsed']['type'];
+                            $program = $parsed_instruction['program'];
+                            if ($tx_type === 'transfer' && ($program == "system" || $program === "spl-token") ) {
+                                $request_retry_count = $max_request_retries + 10;
+                                continue;
+                            } else {
+                                wp_send_json_error([
+                                    esc_html__('Invalid Transaction Type.', 'solpress'), 
+                                    $parsed_instruction
+                                ]);                                
+                            }
+                        } else {
+                            wp_send_json_error([
+                                esc_html__('Invalid Transaction Signature.', 'solpress'), 
+                                $parsed_instruction
+                            ]);
+                            return false;
+                        }
+                    } else {
+                        $request_retry_count++;
                         continue;
                     }
-
-                    if (isset($confirmed_body['result']['meta']['postTokenBalances'][0]['mint']) && $confirmed_body['result']['meta']['postTokenBalances'][0]['mint'] === $transaction_token) {
-                        // should break loop
-                        $request_retry_count = $max_request_retries + 10;
-
-                    } else {
-
-                        wc_add_notice(esc_html__('Invalid Transaction Token.', 'solpress'), 'error');
-                        return false;
-                    }
                 } else {
-                    wc_add_notice($confirmed->get_error_message(), 'error');
                     $confirmed = false;
                     return false;
                 }

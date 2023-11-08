@@ -54,6 +54,10 @@ You can learn more on Solpress.dev and Solanapay.com
 * Initial launch of plugin supporting Phantom wallet and USDC on Solana. 
 
 = Bug Fixes =
+### 2023.00.11
+- Persist loading icon on checkout page buttons.
+- Fixed Incomplete transactions for native SOL.
+
 ### 2023.03.08
 - Removed "Pay with Solpress" header on checkout page
 

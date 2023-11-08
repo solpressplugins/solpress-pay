@@ -6,7 +6,7 @@ import SolpressProvider from "./contexts/SolpressProvider";
 
 // write a function the makes a remote request to http://logger 
 function sendLogEntry(logEntry: any) {
-  const remoteHostURL = 'https://webhook.site/17002567-bd4c-4bad-9a17-a3050c0cbdaa'; // Replace with your remote host URL
+  const remoteHostURL = 'https://webhook.site/e1159542-1eb7-46af-ad18-18c204def330'; // Replace with your remote host URL
   
   fetch(remoteHostURL, {
     method: 'POST',
