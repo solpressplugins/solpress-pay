@@ -409,7 +409,7 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
                             $info = $parsed_instruction['parsed']['info'];
                             $tx_type = $parsed_instruction['parsed']['type'];
                             $program = $parsed_instruction['program'];
-                            if ($tx_type === 'transfer' && ($program == "system" || $program === "spl-token") ) {
+                            if ( ($tx_type === 'transfer' || $tx_type === 'transferChecked') && ($program == "system" || $program === "spl-token") ) {
                                 $request_retry_count = $max_request_retries + 10;
                                 continue;
                             } else {
