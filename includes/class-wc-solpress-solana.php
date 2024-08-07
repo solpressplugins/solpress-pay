@@ -113,7 +113,13 @@ class WC_Solpress_Solana extends WC_Payment_Gateway
 
 
         if (strlen($this->get_option('custom_spl_symbol')) > 0 && strlen($this->get_option('custom_spl_name')) > 0) {
-            $this->addCustomTokenCurrency();
+            try {
+                if (empty(WP_ALLOW_MULTISITE)) {
+                    $this->addCustomTokenCurrency();
+                }
+            } catch (Exception $e) {
+                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            }
 
             add_action( 'woocommerce_settings_pricing_options', array( $this, 'my_custom_pricing_options_description') );
 
